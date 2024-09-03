@@ -1,0 +1,77 @@
+export interface User {
+    id: string;
+    username: string;
+    email: string;
+    profilePictureUrl?: string;
+    schoolYear?: string;
+    group?: string;
+    isAuth: boolean;
+  }
+
+  export interface Chapter {
+    id: string;
+    title: string;
+    description?: string;
+    subjectsId: string[];
+    progress: number; // Percentage of completion
+  }
+
+  export interface Subject {
+    id: string;
+    title: string;
+    description?: string;
+    introductionVideoUrl?: string;
+    chapterId : string;
+  }
+  export interface Exercise {
+    id: string;
+    question: string;
+    options: string[];
+    correctAnswer: string;
+    feedback: string;
+    subjectId : string;
+  }
+  export interface Progress {
+    userId: string;
+    chapterId: string;
+    subjectId: string;
+    completedExercises: number;
+    totalExercises: number;
+    progressPercentage: number;
+  }
+  export interface Reward {
+    id: string;
+    type: 'badge' | 'token' | 'trophy';
+    description: string;
+    criteria: string; // Conditions pour obtenir la récompense
+  }
+  export interface Notification {
+    id: string;
+    userId: string;
+    title: string;
+    message: string;
+    timestamp: Date;
+    type: 'reminder' | 'alert' | 'achievement';
+  }
+
+  export interface Settings {
+    userId: string;
+    theme: 'light' | 'dark';
+    notificationsEnabled: boolean;
+    personalizedProfessor?: boolean; // Option de personnalisation du personnage "Prof"
+  }
+  export interface Feedback {
+    exerciseId: string;
+    userId: string;
+    feedbackText: string;
+    rating?: number; // Optionnel: note attribuée à l'exercice
+  }
+  export interface Session {
+    id: string;
+    userId: string;
+    type: 'revision' | 'mockExam';
+    startTime: Date;
+    endTime: Date;
+    completed: boolean;
+  }
+    
