@@ -20,5 +20,6 @@ export class ChapterListComponent {
     this.chapters$ = this._service.getChapters()
   }
 
+
 }
 
