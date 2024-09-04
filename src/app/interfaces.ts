@@ -3,8 +3,8 @@ export interface User {
     username: string;
     email: string;
     profilePictureUrl?: string;
-    schoolYear?: string;
-    group?: string;
+    schoolYear: string;
+    group: string;
     isAuth: boolean;
   }
 
@@ -13,7 +13,11 @@ export interface User {
     title: string;
     description?: string;
     subjectsId: string[];
-    progress: number; // Percentage of completion
+    progress: UserProgress[]; // Percentage of completion
+  }
+  export interface UserProgress {
+    userId: string; // User ID to identify the user
+    progress: number; // Progress percentage or level
   }
 
   export interface Subject {
