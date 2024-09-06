@@ -1,6 +1,15 @@
-
+<div *ngIf="chapters$ | async as chapters; else loading">
     <ul>
       <li *ngFor="let chapter of chapters">
-       <button (click)="selectedEvent.emit(chapter.id)">{{ chapter.title}} </button> 
+       <button (click)="onChapterSelect(chapter.id)"
+             
+        >{{ chapter.title}} </button> 
       </li>
     </ul>
+</div>
+  
+  <ng-template #loading>
+    <p>Loading chapters...</p>
+  </ng-template>
+  
+ 
