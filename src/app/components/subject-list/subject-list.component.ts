@@ -19,4 +19,5 @@ export class SubjectListComponent {
   this.subjects$ = this._service.getSubjects(); 
   }
 
+
 }
