@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Subject } from '../../interfaces';
 import { SubjectListService } from '../../services/subject-list/subject-list.service';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-subject-list',
   standalone: true,
-  imports: [NgIf, AsyncPipe],
+  imports: [NgIf, NgFor, AsyncPipe],
   templateUrl: './subject-list.component.html',
   styleUrl: './subject-list.component.scss'
 })
