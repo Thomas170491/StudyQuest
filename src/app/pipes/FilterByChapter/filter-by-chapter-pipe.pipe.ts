@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {Chapter, Subject } from '../../interfaces';
+import { Subject } from '../../interfaces';
 
 @Pipe({
   name: 'filterSubjectsByChapter',
@@ -11,8 +11,6 @@ export class FilterSubjectsByChapterPipe implements PipeTransform {
     if (value && selectedChapterId) {
       return value.filter((v) => v.chapterId === selectedChapterId);
     }
-    console.log(value)
-    console.log('Value or selectedChapterId not found. ')
     return []
   } 
 }
