@@ -1,4 +1,4 @@
-import { Chapter, User } from "./interfaces"
+import { Chapter, Subject, User } from "./interfaces"
 
 export const usersData : User[] = [
     {
@@ -43,4 +43,14 @@ export const chapterData : Chapter[] = [
 
    
 
+]
+
+export const subjectData : Subject[] =[
+
+   {
+    id: '1',
+    title: 'Nombres Premiers',
+    description: 'Un nombre premier est un nombre divisible par un et par lui-même',
+    chapterId : '1'
+  }
 ]
