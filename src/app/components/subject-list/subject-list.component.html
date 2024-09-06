@@ -1,1 +1,10 @@
-<p>subject-list works!</p>
+<div *ngIf="subjects$ | async as subjects; else loading">
+    <ul>
+      <li *ngFor="let subject of subjects">
+       <button>{{ subject.title}} </button> 
+      </li>
+    </ul>
+  </div>
+  <ng-template #loading>
+    <p>Loading subjects...</p>
+  </ng-template>
