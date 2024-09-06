@@ -39,7 +39,26 @@ export const chapterData : Chapter[] = [
         ],
         totalExercises : 50
 
-    }
+    },
+
+    {
+      id :'2',
+      title : 'Test Chapter',
+      subjectsId : ['Test1','Test2'],
+      progress : [
+          {
+              userId : '1',
+              progress : 0
+          },
+
+          {
+              userId :'2',
+              progress : 0
+          }
+      ],
+      totalExercises : 50
+
+  }
 
    
 

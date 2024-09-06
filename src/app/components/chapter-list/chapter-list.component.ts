@@ -1,24 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input , Output } from '@angular/core';
 import { Chapter } from '../../interfaces';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { ChapterService } from '../../services/chapters.service';
-import { Observable } from 'rxjs';
+import { AsyncPipe, NgFor } from '@angular/common';
+
 
 @Component({
   selector: 'app-chapter-list',
   standalone: true,
-  imports: [NgFor, NgIf, AsyncPipe],
+  imports: [NgFor, AsyncPipe],
   templateUrl: './chapter-list.component.html',
-  styleUrl: './chapter-list.component.scss'
+  styleUrl: './chapter-list.component.scss',
 })
 export class ChapterListComponent {
-  chapters$ : Observable<Chapter[]>;
 
- constructor(
-    private readonly _service : ChapterService
-  ){
-    this.chapters$ = this._service.getChapters()
-  }
+
+  // constructor(
+  //   private readonly _service: ChapterService,
+  //   private router: Router
+  // ) {
+  // this.chapters$ = this._service.getChapters();
+  // }
+
+ @Input() chapters! : Chapter[]
+ @Output() selectedEvent : EventEmitter<string> = new EventEmitter
+
 
 
 }
