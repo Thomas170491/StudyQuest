@@ -47,7 +47,7 @@ export class ChapterService {
 
 
   // Delete a chapter
-  deleteUser(id: string): void {
+  deleteChapter(id: string): void {
     this.chapters = this.chapters.filter(chapter => chapter.id !== id);
     this.chapterSubject.next(this.chapters);
   }

@@ -6,6 +6,7 @@ export interface User {
     schoolYear: string;
     group: string;
     isAuth: boolean;
+    completedExercises?: number;
   }
 
   export interface Chapter {
@@ -14,6 +15,7 @@ export interface User {
     description?: string;
     subjectsId: string[];
     progress: UserProgress[]; // Percentage of completion
+    totalExercises: number;
   }
   export interface UserProgress {
     userId: string; // User ID to identify the user

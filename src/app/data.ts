@@ -36,7 +36,8 @@ export const chapterData : Chapter[] = [
                 userId :'2',
                 progress : 0
             }
-        ]
+        ],
+        totalExercises : 0
 
     }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from '../interfaces';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 import { usersData } from '../data';
 
 @Injectable({
@@ -19,8 +19,9 @@ export class UserService {
   }
 
   // Get a single user by ID
-  getUserById(id: string): User | undefined {
-    return this.users.find(user => user.id === id);
+  getUserById(id: string) {
+    return this.usersSubject.pipe(
+      map(users => users.find(user => user.id === id)))
   }
 
   // Add a new user

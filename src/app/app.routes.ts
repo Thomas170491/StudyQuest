@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { HomePageComponent } from './components/home/home.component';
 import { ChapterListComponent } from './components/chapter-list/chapter-list.component';
@@ -13,12 +12,7 @@ export const routes: Routes = [
   { path: 'subject-list', component : SubjectListComponent},
 
 
-  { path: '', redirectTo: '/home', pathMatch: 'full' }, // Redirection par défaut vers la page de login
-  { path: '**', redirectTo: '/login' } // Gestion des routes non trouvées
+  { path: '', redirectTo: 'home', pathMatch: 'full' }, // Redirection par défaut vers la page de login
+  { path: '**', redirectTo: 'login' } // Gestion des routes non trouvées
 ];
 
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule {}
