@@ -25,7 +25,7 @@ export const chapterData : Chapter[] = [
         id :'1',
         title : 'Nombres naturels et décimaux',
         description : 'Sujets vus dans ce chapitre : Critères de divisibilité, Nombres premiers, PGDC et PPMC, Les 4 opérations avec les nombres décimux',
-        subjectsId : ['1','2'],
+        subjectsId : ['nombres_premiers','2'],
         progress : [
             {
                 userId : '1',
@@ -37,7 +37,7 @@ export const chapterData : Chapter[] = [
                 progress : 0
             }
         ],
-        totalExercises : 0
+        totalExercises : 50
 
     }
 
