@@ -53,6 +53,8 @@ export class ExerciseService {
     this.exerciseSubject.next(this.exercises);
   }
 
+  
+
 
 }
 
