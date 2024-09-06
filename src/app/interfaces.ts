@@ -28,6 +28,7 @@ export interface User {
     description?: string;
     introductionVideoUrl?: string;
     chapterId : string;
+    
   }
   export interface Exercise {
     id: string;
@@ -36,6 +37,8 @@ export interface User {
     correctAnswer: string;
     feedback: string;
     subjectId : string;
+    level : number;
+    type : string;
   }
   export interface Progress {
     userId: string;
