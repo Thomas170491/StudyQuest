@@ -16,7 +16,7 @@ export class SubjectListComponent {
   constructor(
     private readonly _service : SubjectListService
   ){  
-  this.subjects$ = this._service.getSubjects();
+  this.subjects$ = this._service.getSubjects(); 
   }
 
 }
