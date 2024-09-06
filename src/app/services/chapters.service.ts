@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Chapter } from '../interfaces';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 import { chapterData } from '../data';
 
 @Injectable({
@@ -19,8 +19,9 @@ export class ChapterService {
   }
 
   // Get a single chapter by ID
-  getChapterById(id: string): Chapter | undefined{
-    return this.chapters.find(chapter => chapter.id === id);
+  getChapterById(id: string) {
+    return this.chapterSubject.pipe(map(chapters => chapters.find(chapter =>  chapter.id === id))
+    )
   }
 
   // Add a new chapter
@@ -31,19 +32,20 @@ export class ChapterService {
 
     // Update the progress of a specific user in a chapter
     updateUserProgress(chapterId: string, userId: string, updatedProgress: number): void {
-      const chapter = this.getChapterById(chapterId);
-      if (chapter) {
-        // Find the user progress entry or create a new one if it doesn't exist
-        const userProgress = chapter.progress.find(p => p.userId === userId);
-        if (userProgress) {
-          userProgress.progress = updatedProgress;
-        } else {
-          chapter.progress.push({ userId, progress: updatedProgress });
+      this.getChapterById(chapterId).pipe(map(chapter => {
+        if (chapter) {
+          // Find the user progress entry or create a new one if it doesn't exist
+          const userProgress = chapter.progress.find(p => p.userId === userId);
+          if (userProgress) {
+            userProgress.progress = updatedProgress;
+          } else {
+            chapter.progress.push({ userId, progress: updatedProgress });
+          }
+          // Notify subscribers about the update
+          this.chapterSubject.next(this.chapters);
         }
-        // Notify subscribers about the update
-        this.chapterSubject.next(this.chapters);
-      }
-    }
+      }))
+    };
 
 
   // Delete a chapter

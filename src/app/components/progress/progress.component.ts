@@ -13,7 +13,7 @@ import { AsyncPipe, NgIf } from '@angular/common';
   styleUrls: ['./progress.component.scss'],
   imports: [AsyncPipe, NgIf]
 })
-export class ProgressComponent implements OnInit {
+export class ProgressComponent  {
 
   userId: string;
   chapterId: string;
@@ -33,7 +33,7 @@ export class ProgressComponent implements OnInit {
     this.chapterId = '1'; // This should be dynamically fetched
     // Fetch the current user and chapter details
     this.user$ = this._userService.getUserById(this.userId);
-    this.chapter$ = of(this._chapterService.getChapterById(this.chapterId)).pipe(
+    this.chapter$ = this._chapterService.getChapterById(this.chapterId).pipe(
       tap(chapter => {
         this.totalExercises = chapter?.totalExercises || 0;
       })
@@ -48,9 +48,5 @@ export class ProgressComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
-
-    
-  }
 
 }
