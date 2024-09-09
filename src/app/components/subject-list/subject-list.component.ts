@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Chapter, Subject } from '../../interfaces';
 import { SubjectListService } from '../../services/subject-list/subject-list.service';
@@ -16,7 +16,7 @@ import { FilterSubjectsByChapterPipe } from '../../pipes/FilterByChapter/filter-
 })
 export class SubjectListComponent {
   subjects$ : Observable<Subject[]>;
-  chapters :  Observable<Chapter[]>;
+  chapters$ :  Observable<Chapter[]>;
   selectedChapterId : string = '';
   constructor(
     private readonly _service : SubjectListService,
@@ -24,9 +24,11 @@ export class SubjectListComponent {
     
   ){  
   this.subjects$ = this._service.getSubjects(); 
-  this.chapters = this._chapterService.getChapters();
+  this.chapters$ = this._chapterService.getChapters();
   
   }
+
+  @Output() selectedEvent: EventEmitter<string> = new EventEmitter<string>(); 
 
 }
   
