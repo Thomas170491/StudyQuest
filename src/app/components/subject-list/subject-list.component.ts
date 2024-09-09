@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Chapter, Subject } from '../../interfaces';
+import { Exercise, Subject } from '../../interfaces';
 import { SubjectListService } from '../../services/subject-list/subject-list.service';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { ChapterListComponent } from '../chapter-list/chapter-list.component';
-import { ChapterService } from '../../services/chapters.service';
+import { ChapterListComponent } from '../chapter-list/chapter-list.component';;
+import { Router } from '@angular/router';
 import { FilterSubjectsByChapterPipe } from '../../pipes/FilterByChapter/filter-by-chapter-pipe.pipe';
 
 @Component({
@@ -12,23 +12,31 @@ import { FilterSubjectsByChapterPipe } from '../../pipes/FilterByChapter/filter-
   standalone: true,
   imports: [NgIf, NgFor, AsyncPipe, ChapterListComponent,FilterSubjectsByChapterPipe],
   templateUrl: './subject-list.component.html',
-  styleUrl: './subject-list.component.scss'
+  styleUrls: ['./subject-list.component.scss'] // Fixed typo from `styleUrl` to `styleUrls`
 })
 export class SubjectListComponent {
-  subjects$ : Observable<Subject[]>;
-  chapters$ :  Observable<Chapter[]>;
-  selectedChapterId : string = '';
-  constructor(
-    private readonly _service : SubjectListService,
-    private readonly _chapterService : ChapterService
-    
-  ){  
-  this.subjects$ = this._service.getSubjects(); 
-  this.chapters$ = this._chapterService.getChapters();
+  subjects$: Observable<Subject[]>;
   
+  selectedChapterId: string = '';
+
+  constructor(
+    private readonly _service: SubjectListService,
+ 
+    private router: Router
+  ) {
+    this.subjects$ = this._service.getSubjects(); 
+
+  }
+  @Input() questions$!: Exercise[];
+  @Output() myEvent: EventEmitter<string> = new EventEmitter<string>(); 
+
+  redirectToSubjectList(): void { 
+    this.router.navigate(['/exercises']); 
   }
 
-  @Output() selectedEvent: EventEmitter<string> = new EventEmitter<string>(); 
-
+  onSubjectSelect(id: string): void {
+    console.log(id);
+    this.myEvent.emit(id);
+    this.redirectToSubjectList();
+  }
 }
-  

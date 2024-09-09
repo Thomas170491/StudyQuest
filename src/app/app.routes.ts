@@ -3,6 +3,7 @@ import { LoginComponent } from './components/login/login.component';
 import { HomePageComponent } from './components/home/home.component';
 import { ChapterListComponent } from './components/chapter-list/chapter-list.component';
 import { SubjectListComponent } from './components/subject-list/subject-list.component';
+import { ExerciseComponent } from './components/exercise/exercise.component';
 
 
 export const routes: Routes = [
@@ -10,6 +11,7 @@ export const routes: Routes = [
   { path: 'home', component: HomePageComponent }, 
   { path: 'chapter-list', component : ChapterListComponent},
   { path: 'subject-list', component : SubjectListComponent},
+  { path: 'exercises', component: ExerciseComponent},
 
 
   { path: '', redirectTo: 'home', pathMatch: 'full' }, // Redirection par défaut vers la page de login

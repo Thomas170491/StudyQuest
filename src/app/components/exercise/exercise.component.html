@@ -1,16 +1,18 @@
-<div *ngIf="!subjectId">
-    <app-subject-list= "subjectId = $event"></app-subject-list>
-   
-  <div *ngIf="subjectId">
-   
-    <div *ngIf="question$ | async as questions; else loading">
-      <ul>
-        <li *ngFor="let question of questions">
-          <button>{{ question.question }}</button>
+<div>
+    <app-subject-list (myEvent)="subjectId = $event" *ngIf="questions$ | async as questions" [questions$] = "questions"></app-subject-list>
+  </div>
+  
+
+    <div >
+      <ul *ngIf="questions$ | async  as questions"> 
+        <li *ngFor="let question of questions | filterbySubjectId : subjectId">
+          {{ question.question }}
         </li>
       </ul>
     </div>
   
-  <ng-template #loading>
-    <p>Loading subjects...</p>
-  </ng-template>
+    <ng-template #loading>
+      <p>Loading exercises...</p>
+    </ng-template>
+
+  

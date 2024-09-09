@@ -8,10 +8,11 @@
   <div *ngIf="subjects$ | async as subjects; else loading">
     <ul>
       <li *ngFor="let subject of subjects | filterSubjectsByChapter : selectedChapterId">
-        <button>{{ subject.title }}</button>
+        <button (click) ="onSubjectSelect(subject.id)">{{ subject.title }}</button>
       </li>
     </ul>
   </div>
+</div>
 
 <ng-template #loading>
   <p>Loading subjects...</p>

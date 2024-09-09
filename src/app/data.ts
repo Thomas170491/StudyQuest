@@ -204,7 +204,7 @@ export const ExerciseData = [
     options: ['A. 91', 'B. 101', 'C. 97', 'D. 89'],
     correctAnswer: 'A',
     feedback:
-      "91 est divisible par 7 (91 ÷ 7 = 13., donc ce n'est pas un nombre premier.",
+      "91 est divisible par 7, donc ce n'est pas un nombre premier.",
     subjectId: 'nombres_premiers',
     level: 2,
     type: 'multiple_choice',

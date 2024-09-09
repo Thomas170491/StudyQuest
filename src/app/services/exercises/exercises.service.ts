@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {  Exercise } from '../../interfaces';
-import { Observable, BehaviorSubject, map, first } from 'rxjs';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 import { ExerciseData } from '../../data'; // Assume this is the initial data
 
 @Injectable({
@@ -34,9 +34,12 @@ export class ExerciseService {
 
   // Get exercisses by Subject
   getExerciseBySubject(subjectId : string) : Observable<Exercise[]> {
-    return this.exerciseSubject.pipe(
+    const data = this.exerciseSubject.pipe(
       map(exercises => exercises.filter(exercise => exercise.subjectId === subjectId))
+      
     );
+    console.log('data :',data)
+    return data;
   }
 
   // Add a new exercise
