@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Exercise } from '../../interfaces';
+import {  Exercise } from '../../interfaces';
 import { Observable, BehaviorSubject, map, first } from 'rxjs';
 import { ExerciseData } from '../../data'; // Assume this is the initial data
 
@@ -29,6 +29,13 @@ export class ExerciseService {
   getExercisesByLevel(level: number): Observable<Exercise[]> {
     return this.exerciseSubject.pipe(
       map(exercises => exercises.filter(exercise => exercise.level === level))
+    );
+  }
+
+  // Get exercisses by Subject
+  getExerciseBySubject(subjectId : string) : Observable<Exercise[]> {
+    return this.exerciseSubject.pipe(
+      map(exercises => exercises.filter(exercise => exercise.subjectId === subjectId))
     );
   }
 
