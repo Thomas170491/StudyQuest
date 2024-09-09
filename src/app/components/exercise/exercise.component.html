@@ -1,1 +1,16 @@
-<p>exercise works!</p>
+<div *ngIf="!subjectId">
+    <app-subject-list= "subjectId = $event"></app-subject-list>
+   
+  <div *ngIf="subjectId">
+   
+    <div *ngIf="question$ | async as questions; else loading">
+      <ul>
+        <li *ngFor="let question of questions">
+          <button>{{ question.question }}</button>
+        </li>
+      </ul>
+    </div>
+  
+  <ng-template #loading>
+    <p>Loading subjects...</p>
+  </ng-template>
