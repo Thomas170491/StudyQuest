@@ -30,13 +30,10 @@ export class SubjectListComponent {
   @Input() questions$!: Exercise[];
   @Output() myEvent: EventEmitter<string> = new EventEmitter<string>(); 
 
-  redirectToSubjectList(): void { 
-    this.router.navigate(['/exercises']); 
-  }
 
   onSubjectSelect(id: string): void {
     console.log(id);
     this.myEvent.emit(id);
-    this.redirectToSubjectList();
+
   }
 }
