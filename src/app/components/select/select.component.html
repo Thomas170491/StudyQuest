@@ -1,0 +1,7 @@
+<app-chapter-list (selectedChapter)="selectedChapterId = $event"></app-chapter-list>
+<app-subject-list *ngIf="selectedChapterId" (SubjectSeleected)="selectedSubjectId"
+    [chapiterId]="selectedChapterId">
+</app-subject-list>
+
+<app-exercise *ngIf="selectedChapterId && selectedSubjectId">
+</app-exercise>

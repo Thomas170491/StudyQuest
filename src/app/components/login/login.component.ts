@@ -15,7 +15,7 @@ export class LoginComponent {
   }
     
     authentificateUser = () => {
-       this.router.navigate(['/chapter-list']);
+       this.router.navigate(['/select']);
    }
   }
 
