@@ -27,13 +27,13 @@ export class SubjectListComponent {
     this.subjects$ = this._service.getSubjects(); 
 
   }
-  @Input() questions$!: Exercise[];
-  @Output() myEvent: EventEmitter<string> = new EventEmitter<string>(); 
+  @Input() chapiterId!: string;
+  @Output() SubjectSeleected: EventEmitter<string> = new EventEmitter<string>(); 
 
 
   onSubjectSelect(id: string): void {
     console.log(id);
-    this.myEvent.emit(id);
+    this.SubjectSeleected.emit(id);
 
   }
 }
