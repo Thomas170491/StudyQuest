@@ -1,6 +1,6 @@
 
 <div *ngIf="!selectedChapterId">
-  <app-chapter-list (selectedEvent)="selectedChapterId = $event"></app-chapter-list>
+  <app-chapter-list (selectedChapter)="selectedChapterId = $event"></app-chapter-list>
 </div>
 
 <div *ngIf="selectedChapterId">
