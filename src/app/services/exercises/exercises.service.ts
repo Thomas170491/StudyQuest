@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import {  Exercise } from '../../interfaces';
-import { Observable, BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
+import { Exercise } from '../../interfaces';
 import { ExerciseData } from '../../data'; // Assume this is the initial data
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExerciseService {
-
   private exercises: Exercise[] = ExerciseData;
   private exerciseSubject: BehaviorSubject<Exercise[]> = new BehaviorSubject<Exercise[]>(this.exercises);
+  private currentIndex$ : BehaviorSubject<number>= new BehaviorSubject<number>(0);
 
-  constructor() { }
+  constructor() {}
 
   // Get all exercises
   getExercises(): Observable<Exercise[]> {
@@ -32,14 +32,11 @@ export class ExerciseService {
     );
   }
 
-  // Get exercisses by Subject
-  getExerciseBySubject(subjectId : string) : Observable<Exercise[]> {
-    const data = this.exerciseSubject.pipe(
+  // Get exercises by Subject
+  getExercisesBySubject(subjectId: string): Observable<Exercise[]> {
+    return this.exerciseSubject.pipe(
       map(exercises => exercises.filter(exercise => exercise.subjectId === subjectId))
-      
     );
-    console.log('data :',data)
-    return data;
   }
 
   // Add a new exercise
@@ -63,9 +60,39 @@ export class ExerciseService {
     this.exerciseSubject.next(this.exercises);
   }
 
-  
+  // Get the current exercise based on subjectId and current index
+  getCurrentExercise(subjectId: string): Observable<Observable<Exercise>> {
 
+    return this.currentIndex$.pipe(
+      map(index => this.exerciseSubject.pipe(
+        map(exercises => exercises.filter(e => e.subjectId === subjectId)),
+        map(filteredExercises => filteredExercises[index])
+      )),
+      map(exercise$ => exercise$)
+    );
+  }
 
+  // Navigate to the next exercise
+  goToNextExercise(): void {
+    this.currentIndex$.pipe(
+      map(index => this.exercises.length > index + 1 ? index + 1 : index)
+    ).subscribe(nextIndex => this.currentIndex$.next(nextIndex));
+  }
+
+  // Navigate to the previous exercise
+  goToPreviousExercise(): void {
+    this.currentIndex$.pipe(
+      map(index => index > 0 ? index - 1 : index)
+    ).subscribe(previousIndex => this.currentIndex$.next(previousIndex));
+  }
+
+  // Get the current index
+  getCurrentIndex(): Observable<number> {
+    return this.currentIndex$.asObservable();
+  }
+
+  // Reset the index to the first exercise
+  resetIndex(): void {
+    this.currentIndex$.next(0);
+  }
 }
-
-
