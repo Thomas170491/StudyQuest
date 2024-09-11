@@ -33,7 +33,7 @@ export interface User {
   export interface Exercise {
     id: string;
     question: string;
-    options: string[];
+    options?: string[];
     correctAnswer: string;
     feedback: string;
     subjectId : string;
