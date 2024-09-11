@@ -1,11 +1,43 @@
-<p>{{subjectId}}</p>
-    <ul *ngIf="questions$ | async  as questions">
-        <li *ngFor="let question of questions | filterbySubjectId : subjectId">
-            {{ question.question }}
-        </li>
-    </ul>
-
-
-    <ng-template #loading>
-        <p>Loading exercises...</p>
-    </ng-template>
+<div *ngIf="currentQuestion$ | async as currentQuestion; else loading">
+    <form [formGroup]="answerForms[currentQuestion.id]">
+      <!-- Display the question -->
+      <div class="question-text">
+        <p>{{ currentQuestion.question }}</p>
+      </div>
+  
+      <!-- Render different types of inputs based on question type -->
+      <ng-container [ngSwitch]="currentQuestion.type">
+  
+        <!-- Multiple Choice Question -->
+        <div *ngSwitchCase="'multiple-choice'">
+          <div *ngFor="let option of currentQuestion.options">
+            <label>
+              <input type="radio" formControlName="selectedOption" [value]="option">
+              {{ option }}
+            </label>
+          </div>
+        </div>
+  
+        <!-- Long Answer Question -->
+        <div *ngSwitchCase="'long-answer'">
+          <textarea formControlName="answer" placeholder="Your detailed answer..."></textarea>
+        </div>
+  
+      </ng-container>
+  
+      <!-- Display feedback if needed -->
+      <div class="feedback" *ngIf="currentQuestion.feedback">
+        <p>{{ currentQuestion.feedback }}</p>
+      </div>
+  
+      <!-- Buttons for navigation and submission -->
+      <div class="navigation-buttons">
+        <button type="button" (click)="onPrevious()" [disabled]="isFirstQuestion()">Previous</button>
+        <button type="button" (click)="submitAnswer(currentQuestion.id)">Submit</button>
+        <button type="button" (click)="onNext()" [disabled]="isLastQuestion()">Next</button>
+      </div>
+    </form>
+</div>
+<ng-template #loading>
+  <p>Loading...</p>
+</ng-template>
