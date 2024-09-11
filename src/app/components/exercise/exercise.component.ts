@@ -24,12 +24,14 @@ export class ExerciseComponent implements OnInit {
   @Input() subjectId!: string;
   questions$: Observable<Exercise[]> = of([]);
   answerForms: { [questionId: string]: FormGroup } = {};
-  currentQuestion$: Observable<Exercise | undefined> = of(undefined);
+  currentQuestion$: Observable<Exercise | undefined>;
 
   constructor(
     private readonly _exerciseService: ExerciseService,
     private readonly fb: FormBuilder
-  ) {}
+  ) {
+    this.currentQuestion$ = this._exerciseService.getCurrentExercise(this.subjectId);
+  }
 
   ngOnInit() {
     this.questions$ = this._exerciseService.getExercisesBySubject(this.subjectId).pipe(
@@ -46,7 +48,7 @@ export class ExerciseComponent implements OnInit {
           }
         });
 
-        this.currentQuestion$ = this._exerciseService.getCurrentExercise(this.subjectId);
+        
       })
     );
   }
