@@ -14,7 +14,7 @@ import { NgIf } from '@angular/common';
 export class SelectComponent {
   selectedChapterId! : string  ;
   selectedSubjectId! : string ;
-  selectedExercisesId! : string;
+  selectedExercisesId? : string;
 
 
 

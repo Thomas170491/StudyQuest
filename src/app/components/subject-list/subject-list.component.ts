@@ -28,12 +28,12 @@ export class SubjectListComponent {
 
   }
   @Input() chapiterId!: string;
-  @Output() SubjectSeleected: EventEmitter<string> = new EventEmitter<string>(); 
+  @Output() SubjectSelected: EventEmitter<string> = new EventEmitter<string>(); 
 
 
   onSubjectSelect(id: string): void {
     console.log(id);
-    this.SubjectSeleected.emit(id);
+    this.SubjectSelected.emit(id);
 
   }
 }

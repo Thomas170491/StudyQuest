@@ -1,13 +1,7 @@
-
-<div *ngIf="!selectedChapterId">
-  <app-chapter-list (selectedChapter)="selectedChapterId = $event"></app-chapter-list>
-</div>
-
-<div *ngIf="selectedChapterId">
  
   <div *ngIf="subjects$ | async as subjects; else loading">
     <ul>
-      <li *ngFor="let subject of subjects | filterSubjectsByChapter : selectedChapterId">
+      <li *ngFor="let subject of subjects | filterSubjectsByChapter : chapiterId">
         <button (click) ="onSubjectSelect(subject.id)">{{ subject.title }}</button>
       </li>
     </ul>

@@ -11,6 +11,6 @@ export class FilterSubjectsByChapterPipe implements PipeTransform {
     if (value && selectedChapterId) {
       return value.filter((v) => v.chapterId === selectedChapterId);
     }
-    return []
+    return [];
   } 
 }

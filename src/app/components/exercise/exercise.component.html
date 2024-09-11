@@ -1,4 +1,4 @@
-
+<p>{{subjectId}}</p>
     <ul *ngIf="questions$ | async  as questions">
         <li *ngFor="let question of questions | filterbySubjectId : subjectId">
             {{ question.question }}
