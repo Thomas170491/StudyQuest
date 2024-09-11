@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { Exercise } from '../../interfaces';
 import { ExerciseData } from '../../data'; // Assume this is the initial data
 
@@ -9,7 +9,7 @@ import { ExerciseData } from '../../data'; // Assume this is the initial data
 export class ExerciseService {
   private exercises: Exercise[] = ExerciseData;
   private exerciseSubject: BehaviorSubject<Exercise[]> = new BehaviorSubject<Exercise[]>(this.exercises);
-  private currentIndex$ : BehaviorSubject<number>= new BehaviorSubject<number>(0);
+  private currentIndex$ = new BehaviorSubject<number>(0);
 
   constructor() {}
 
@@ -61,29 +61,26 @@ export class ExerciseService {
   }
 
   // Get the current exercise based on subjectId and current index
-  getCurrentExercise(subjectId: string): Observable<Observable<Exercise>> {
-
+  getCurrentExercise(subjectId: string): Observable<Exercise | undefined> {
     return this.currentIndex$.pipe(
-      map(index => this.exerciseSubject.pipe(
-        map(exercises => exercises.filter(e => e.subjectId === subjectId)),
-        map(filteredExercises => filteredExercises[index])
-      )),
-      map(exercise$ => exercise$)
+      map(index => this.exerciseSubject.value.filter(e => e.subjectId === subjectId)[index])
     );
   }
 
   // Navigate to the next exercise
   goToNextExercise(): void {
     this.currentIndex$.pipe(
-      map(index => this.exercises.length > index + 1 ? index + 1 : index)
-    ).subscribe(nextIndex => this.currentIndex$.next(nextIndex));
+      map(currentIndex => Math.min(currentIndex + 1, this.exercises.length - 1)),
+      tap(nextIndex => this.currentIndex$.next(nextIndex))
+    ).subscribe(); // Subscription only for triggering side effects
   }
 
   // Navigate to the previous exercise
   goToPreviousExercise(): void {
     this.currentIndex$.pipe(
-      map(index => index > 0 ? index - 1 : index)
-    ).subscribe(previousIndex => this.currentIndex$.next(previousIndex));
+      map(currentIndex => Math.max(currentIndex - 1, 0)),
+      tap(previousIndex => this.currentIndex$.next(previousIndex))
+    ).subscribe(); // Subscription only for triggering side effects
   }
 
   // Get the current index
