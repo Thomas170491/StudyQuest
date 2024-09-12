@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "StudyQuest": {
+    "studyquest": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "StudyQuest:build:production"
+              "buildTarget": "studyquest:build:production"
             },
             "development": {
-              "buildTarget": "StudyQuest:build:development"
+              "buildTarget": "studyquest:build:development"
             }
           },
           "defaultConfiguration": "development"
