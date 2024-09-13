@@ -1,43 +1,43 @@
-<div *ngIf="currentQuestion$ | async as currentQuestion; else loading">
-    <form [formGroup]="answerForms[currentQuestion.id]">
-      <!-- Display the question -->
-      <div class="question-text">
-        <p>{{ currentQuestion.question }}</p>
-      </div>
-  
-      <!-- Render different types of inputs based on question type -->
-      <ng-container [ngSwitch]="currentQuestion.type">
-  
-        <!-- Multiple Choice Question -->
-        <div *ngSwitchCase="'multiple-choice'">
-          <div *ngFor="let option of currentQuestion.options">
-            <label>
-              <input type="radio" formControlName="selectedOption" [value]="option">
-              {{ option }}
-            </label>
-          </div>
+<div *ngif="currentQuestion$ | async as currentQuestion; else loading">
+  <form *ngIf="answerForms[currentQuestion.id]" [formGroup]="answerForms[currentQuestion.id]">
+    <!-- Display the question -->
+    <div class="question-text">
+      <p>{{ currentQuestion.question }}</p>
+    </div>
+
+    <!-- Render different types of inputs based on question type -->
+    <ng-container [ngSwitch]="currentQuestion.type">
+
+      <!-- Multiple Choice Question -->
+      <div *ngswitchcase="'multiple_choice'">
+        <div *ngfor="let option of currentQuestion.options">
+          <label>
+            <input type="radio" formcontrolname="selectedOption" [value]="option">
+            {{ option }}
+          </label>
         </div>
-  
-        <!-- Long Answer Question -->
-        <div *ngSwitchCase="'long-answer'">
-          <textarea formControlName="answer" placeholder="Your detailed answer..."></textarea>
-        </div>
-  
-      </ng-container>
-  
-      <!-- Display feedback if needed -->
-      <div class="feedback" *ngIf="currentQuestion.feedback">
-        <p>{{ currentQuestion.feedback }}</p>
       </div>
-  
-      <!-- Buttons for navigation and submission -->
-      <div class="navigation-buttons">
-        <button type="button" (click)="onPrevious()" [disabled]="isFirstQuestion()">Previous</button>
-        <button type="button" (click)="submitAnswer(currentQuestion.id)">Submit</button>
-        <button type="button" (click)="onNext()" [disabled]="isLastQuestion()">Next</button>
+
+      <!-- Long Answer Question -->
+      <div *ngswitchcase="'long_answer'">
+        <textarea formcontrolname="answer" placeholder="Your detailed answer..."></textarea>
       </div>
-    </form>
+
+    </ng-container>
+
+    <!-- Display feedback if needed -->
+    <div class="feedback" *ngif="currentQuestion.feedback">
+      <p>{{ currentQuestion.feedback }}</p>
+    </div>
+
+    <!-- Buttons for navigation and submission -->
+    <div class="navigation-buttons">
+      <button type="button" (click)="onPrevious()" [disabled]="isFirstQuestion()">Previous</button>
+      <button type="button" (click)="submitAnswer(currentQuestion.id)">Submit</button>
+      <button type="button" (click)="onNext()" [disabled]="isLastQuestion()">Next</button>
+    </div>
+  </form>
 </div>
-<ng-template #loading>
-  <p>Loading...</p>
+<ng-template #loading="">
+<p>Loading...</p>
 </ng-template>

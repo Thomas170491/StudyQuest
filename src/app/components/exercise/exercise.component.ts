@@ -2,53 +2,46 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ExerciseService } from '../../services/exercises/exercises.service';
 import { Observable, of, tap } from 'rxjs';
 import { Exercise } from '../../interfaces';
-import { AsyncPipe, CommonModule, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, CommonModule, NgFor, NgIf, NgSwitch } from '@angular/common';
 import { FilterbySubjectIdPipe } from '../../pipes/filterby-subject-id.pipe';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-
-
 
 @Component({
   selector: 'app-exercise',
   standalone: true,
-  imports: [NgIf, NgFor, AsyncPipe, FilterbySubjectIdPipe, CommonModule,ReactiveFormsModule],
+  imports: [NgIf, NgFor, AsyncPipe, FilterbySubjectIdPipe, CommonModule, ReactiveFormsModule,NgSwitch,FormsModule],
   templateUrl: './exercise.component.html',
   styleUrls: ['./exercise.component.scss']
 })
-
 
 export class ExerciseComponent implements OnInit {
   @Input() subjectId!: string;
   questions$: Observable<Exercise[]> = of([]);
   answerForms: { [questionId: string]: FormGroup } = {};
-  currentQuestion$: Observable<Exercise | undefined>;
+  currentQuestion$!: Observable<Exercise | undefined>;
 
   constructor(
     private readonly _exerciseService: ExerciseService,
     private readonly fb: FormBuilder
-  ) {
-    this.currentQuestion$ = this._exerciseService.getCurrentExercise(this.subjectId);
-  }
+  ) {}
 
   ngOnInit() {
-    this.questions$ = this._exerciseService.getExercisesBySubject(this.subjectId).pipe(
-      tap(questions => {
-        questions.forEach(question => {
-          if (question.type === 'multiple-choice') {
-            this.answerForms[question.id] = this.fb.group({
+    this.currentQuestion$ = this._exerciseService.getCurrentExercise(this.subjectId).pipe(
+      tap(currentQuestion => {
+        if (currentQuestion) {
+          // Initialize form based on the current question type
+          if (currentQuestion.type == 'multiple_choice') {
+            this.answerForms[currentQuestion.id] = this.fb.group({
               selectedOption: ['']
             });
-          } else if (question.type === 'long-answer') {
-            this.answerForms[question.id] = this.fb.group({
+          } else if (currentQuestion.type == 'long_answer') {
+            this.answerForms[currentQuestion.id] = this.fb.group({
               answer: ['']
             });
           }
-        });
-
-        
+        }
+        return currentQuestion
       })
     );
   }
