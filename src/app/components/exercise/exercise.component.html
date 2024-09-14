@@ -1,4 +1,4 @@
-<div *ngif="currentQuestion$ | async as currentQuestion; else loading">
+<div *ngIf="currentQuestion$ | async as currentQuestion; else loading">
   <form *ngIf="answerForms[currentQuestion.id]" [formGroup]="answerForms[currentQuestion.id]">
     <!-- Display the question -->
     <div class="question-text">
@@ -9,8 +9,8 @@
     <ng-container [ngSwitch]="currentQuestion.type">
 
       <!-- Multiple Choice Question -->
-      <div *ngswitchcase="'multiple_choice'">
-        <div *ngfor="let option of currentQuestion.options">
+      <div *ngSwitchCase="'multiple_choice'">
+        <div *ngFor="let option of currentQuestion.options">
           <label>
             <input type="radio" formcontrolname="selectedOption" [value]="option">
             {{ option }}
@@ -19,14 +19,14 @@
       </div>
 
       <!-- Long Answer Question -->
-      <div *ngswitchcase="'long_answer'">
+      <div *ngSwitchCase="'long_answer'">
         <textarea formcontrolname="answer" placeholder="Your detailed answer..."></textarea>
       </div>
 
     </ng-container>
 
     <!-- Display feedback if needed -->
-    <div class="feedback" *ngif="currentQuestion.feedback">
+    <div class="feedback" *ngIf="currentQuestion.feedback">
       <p>{{ currentQuestion.feedback }}</p>
     </div>
 

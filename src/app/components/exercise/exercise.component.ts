@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ExerciseService } from '../../services/exercises/exercises.service';
 import { Observable, of, tap } from 'rxjs';
 import { Exercise } from '../../interfaces';
-import { AsyncPipe, CommonModule, NgFor, NgIf, NgSwitch } from '@angular/common';
+import { CommonModule} from '@angular/common';
 import { FilterbySubjectIdPipe } from '../../pipes/filterby-subject-id.pipe';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -10,7 +10,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'app-exercise',
   standalone: true,
-  imports: [NgIf, NgFor, AsyncPipe, FilterbySubjectIdPipe, CommonModule, ReactiveFormsModule,NgSwitch,FormsModule],
+  imports: [FilterbySubjectIdPipe, CommonModule, ReactiveFormsModule,FormsModule],
   templateUrl: './exercise.component.html',
   styleUrls: ['./exercise.component.scss']
 })
