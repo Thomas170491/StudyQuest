@@ -1,17 +1,30 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap, switchMap } from 'rxjs/operators';
 import { Exercise } from '../../interfaces';
-import { ExerciseData } from '../../data'; // Assume this is the initial data
+import { FirestoreService } from '../firestore/firestore.service'; // Assuming you have a FirestoreService defined
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExerciseService {
-  private exercises: Exercise[] = ExerciseData;
+  private exercises: Exercise[] = [];
   private exerciseSubject: BehaviorSubject<Exercise[]> = new BehaviorSubject<Exercise[]>(this.exercises);
   private currentIndex$ = new BehaviorSubject<number>(0);
 
-  constructor() { }
+  constructor(private firestoreService: FirestoreService) {
+    this.loadExercises();
+  }
+
+  // Load exercises from Firestore
+  private loadExercises(): void {
+    this.firestoreService.loadData('exercises').pipe(
+      tap((data: Exercise[]) => {
+        this.exercises = data;
+        this.exerciseSubject.next(this.exercises);
+      })
+    )
+  }
 
   // Get all exercises
   getExercises(): Observable<Exercise[]> {
@@ -40,57 +53,38 @@ export class ExerciseService {
   }
 
   // Add a new exercise
-  addExercise(exercise: Exercise): void {
-    this.exercises.push(exercise);
-    this.exerciseSubject.next(this.exercises);
+  async addExercise(exercise: Exercise): Promise<void> {
+    try {
+      await this.firestoreService.addData('exercises', exercise);
+      this.exercises.push(exercise);
+      this.exerciseSubject.next(this.exercises);
+    } catch (error) {
+      console.error('Error adding exercise:', error);
+    }
   }
 
   // Update an exercise
-  updateExercise(updatedExercise: Exercise): void {
-    const index = this.exercises.findIndex(exercise => exercise.id === updatedExercise.id);
-    if (index !== -1) {
-      this.exercises[index] = updatedExercise;
-      this.exerciseSubject.next(this.exercises);
+  async updateExercise(id: string, updatedExercise: Exercise): Promise<void> {
+    try {
+      await this.firestoreService.updateData('exercises', id, updatedExercise);
+      const index = this.exercises.findIndex(exercise => exercise.id === id);
+      if (index !== -1) {
+        this.exercises[index] = updatedExercise;
+        this.exerciseSubject.next(this.exercises);
+      }
+    } catch (error) {
+      console.error('Error updating exercise:', error);
     }
   }
 
   // Delete an exercise
-  deleteExercise(id: string): void {
-    this.exercises = this.exercises.filter(exercise => exercise.id !== id);
-    this.exerciseSubject.next(this.exercises);
-  }
-
-  // Get the current exercise based on subjectId and current index
-  getCurrentExercise(subjectId: string): Observable<Exercise | undefined> {
-    return this.currentIndex$.pipe(
-      map(index => {
-        const filteredExercises = this.exerciseSubject.value.filter(e => e.subjectId === subjectId);
-        return filteredExercises[index]; // Make sure index is valid
-      })
-    );
-  }
-
-  // Navigate to the next exercise
-  goToNextExercise(): void {
-    const currentIndex = this.currentIndex$.value;
-    const nextIndex = Math.min(currentIndex + 1, this.exercises.length - 1);
-    this.currentIndex$.next(nextIndex);
-  }
-
-  // Navigate to the previous exercise
-  goToPreviousExercise(): void {
-    const currentIndex = this.currentIndex$.value;
-    const previousIndex = Math.max(currentIndex - 1, 0); 
-    this.currentIndex$.next(previousIndex);
-  }
-  
-  // Get the current index
-  getCurrentIndex(): Observable<number> {
-    return this.currentIndex$.asObservable();
-  }
-
-  // Reset the index to the first exercise
-  resetIndex(): void {
-    this.currentIndex$.next(0);
+  async deleteExercise(id: string): Promise<void> {
+    try {
+      await this.firestoreService.deleteData('exercises', id);
+      this.exercises = this.exercises.filter(exercise => exercise.id !== id);
+      this.exerciseSubject.next(this.exercises);
+    } catch (error) {
+      console.error('Error deleting exercise:', error);
+    }
   }
 }

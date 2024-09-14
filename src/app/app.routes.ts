@@ -4,6 +4,7 @@ import { HomePageComponent } from './components/home/home.component';
 import { SelectComponent } from './components/select/select.component';
 
 
+
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'home', component: HomePageComponent }, 

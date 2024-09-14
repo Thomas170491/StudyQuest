@@ -14,9 +14,9 @@ export class FirestoreService {
     const collectionRef = collection(this.firestore, collectionName);
     return collectionData(collectionRef, { idField: 'id' });
   }
-  addData(collectionName: string, data: any): void { 
+  async addData(collectionName: string, data: any): Promise<void> { 
     const collectionRef = collection(this.firestore, collectionName);
-    addDoc(collectionRef, data);
+    await addDoc(collectionRef, data);
   } 
   async updateData(collectionName: string, id: string, data: any): Promise<void> {
     const collectionRef = collection(this.firestore, collectionName);
