@@ -11,7 +11,7 @@ export class ExerciseService {
   private exerciseSubject: BehaviorSubject<Exercise[]> = new BehaviorSubject<Exercise[]>(this.exercises);
   private currentIndex$ = new BehaviorSubject<number>(0);
 
-  constructor() {}
+  constructor() { }
 
   // Get all exercises
   getExercises(): Observable<Exercise[]> {
@@ -63,26 +63,27 @@ export class ExerciseService {
   // Get the current exercise based on subjectId and current index
   getCurrentExercise(subjectId: string): Observable<Exercise | undefined> {
     return this.currentIndex$.pipe(
-      map(index => this.exerciseSubject.value.filter(e => e.subjectId === subjectId)[index])
+      map(index => {
+        const filteredExercises = this.exerciseSubject.value.filter(e => e.subjectId === subjectId);
+        return filteredExercises[index]; // Make sure index is valid
+      })
     );
   }
 
   // Navigate to the next exercise
   goToNextExercise(): void {
-    this.currentIndex$.pipe(
-      map(currentIndex => Math.min(currentIndex + 1, this.exercises.length - 1)),
-      tap(nextIndex => this.currentIndex$.next(nextIndex))
-    ).subscribe(); // Subscription only for triggering side effects
+    const currentIndex = this.currentIndex$.value;
+    const nextIndex = Math.min(currentIndex + 1, this.exercises.length - 1);
+    this.currentIndex$.next(nextIndex);
   }
 
   // Navigate to the previous exercise
   goToPreviousExercise(): void {
-    this.currentIndex$.pipe(
-      map(currentIndex => Math.max(currentIndex - 1, 0)),
-      tap(previousIndex => this.currentIndex$.next(previousIndex))
-    ).subscribe(); // Subscription only for triggering side effects
+    const currentIndex = this.currentIndex$.value;
+    const previousIndex = Math.max(currentIndex - 1, 0); 
+    this.currentIndex$.next(previousIndex);
   }
-
+  
   // Get the current index
   getCurrentIndex(): Observable<number> {
     return this.currentIndex$.asObservable();
