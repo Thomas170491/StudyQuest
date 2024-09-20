@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { User } from '../interfaces';
 import { Observable, BehaviorSubject, map } from 'rxjs';
-import { usersData } from '../data';
+import { FirestoreService } from './firestore/firestore.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +9,20 @@ import { usersData } from '../data';
 export class UserService {
 
 
-  constructor() { }
-  private users = usersData;
+
+  private users!: User[];
+  
+  constructor(
+    private readonly _firestoreService: FirestoreService
+  ) {
+    this._firestoreService.loadData('users').pipe(
+      map(data => {
+      this.users = data;
+      this.usersSubject.next(this.users);
+      })
+    )
+    };
+  
 
   private usersSubject: BehaviorSubject<User[]> = new BehaviorSubject<User[]>(this.users);
 
