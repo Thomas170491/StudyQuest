@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ChapterService } from '../../services/chapters.service';
-import { UserService } from '../../services/user-service.service';
+import { UserService } from '../../services/users/user-service.service';
 import { Chapter, User } from '../../interfaces';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';

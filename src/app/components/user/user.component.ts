@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { User } from '../../interfaces';
-import { UserService } from '../../services/user-service.service';
+import { UserService } from '../../services/users/user-service.service';
 @Component({
   selector: 'app-user',
   standalone: true,
