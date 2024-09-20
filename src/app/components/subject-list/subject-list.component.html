@@ -1,4 +1,4 @@
- 
+
   <div *ngIf="subjects$ | async as subjects; else loading">
     <ul>
       <li *ngFor="let subject of subjects | filterSubjectsByChapter : chapiterId">

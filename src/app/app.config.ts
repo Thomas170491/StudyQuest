@@ -5,6 +5,7 @@ import { routes } from './app.routes';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { provideIonicAngular } from '@ionic/angular/standalone';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,5 +19,5 @@ export const appConfig: ApplicationConfig = {
         "authDomain":"studyquest-4cbe3.firebaseapp.com",
         "messagingSenderId":"795943998202"})),
     provideFirestore(() => getFirestore()),
-    provideAuth(() => getAuth()), provideFirestore(() => getFirestore())]
+    provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideIonicAngular({})]
 };

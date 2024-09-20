@@ -87,4 +87,38 @@ export class ExerciseService {
       console.error('Error deleting exercise:', error);
     }
   }
+
+  getCurrentExercise(subjectId: string): Observable<Exercise> {
+
+    return this.currentIndex$.pipe(
+      switchMap(index => this.exerciseSubject.pipe(
+        map(exercises => exercises.filter(e => e.subjectId === subjectId)),
+        map(filteredExercises => filteredExercises[index])
+      )),
+    );
+  }
+
+  // Navigate to the next exercise
+  goToNextExercise(): void {
+    this.currentIndex$.pipe(
+      map(index => this.exercises.length > index + 1 ? index + 1 : index)
+    ).subscribe(nextIndex => this.currentIndex$.next(nextIndex));
+  }
+
+  // Navigate to the previous exercise
+  goToPreviousExercise(): void {
+    this.currentIndex$.pipe(
+      map(index => index > 0 ? index - 1 : index)
+    ).subscribe(previousIndex => this.currentIndex$.next(previousIndex));
+  }
+
+  // Get the current index
+  getCurrentIndex(): Observable<number> {
+    return this.currentIndex$.asObservable();
+  }
+
+  // Reset the index to the first exercise
+  resetIndex(): void {
+    this.currentIndex$.next(0);
+}
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { map, tap, switchMap, } from 'rxjs/operators';
 import { FirestoreService } from './firestore/firestore.service'; 
 import { Chapter } from '../interfaces';
@@ -8,22 +8,21 @@ import { Chapter } from '../interfaces';
   providedIn: 'root'
 })
 export class ChapterService {
-  private chapters: Chapter[] = [];
-  private chapterSubject: BehaviorSubject<Chapter[]> = new BehaviorSubject<Chapter[]>(this.chapters);
+ 
+  private chapterSubject: BehaviorSubject<Chapter[]> = new BehaviorSubject<Chapter[]>([]);
 
   constructor(private firestoreService: FirestoreService) {
     this.loadChapters();
   }
 
   // Load chapters from Firestore
-  private loadChapters(): void {
-    this.firestoreService.loadData('chapters').pipe(
-      tap((data: Chapter[]) => {
-        this.chapters = data;
-        this.chapterSubject.next(this.chapters);
-      })
-    )
-  }
+  private async loadChapters(){
+    const data = await firstValueFrom(this.firestoreService.loadData('Chapters'))
+    
+        this.chapterSubject.next(data);
+      }
+    
+  
 
   // Get all chapters
   getChapters(): Observable<Chapter[]> {
@@ -38,11 +37,10 @@ export class ChapterService {
   }
 
   // Add a new chapter
-async addChapter(chapter: Chapter): Promise<void> {
+async addChapter(chapter: Chapter[]): Promise<void> {
   try {
     await this.firestoreService.addData('chapters', chapter);
-    this.chapters.push(chapter);
-    this.chapterSubject.next(this.chapters);
+    this.chapterSubject.next(chapter);
   } catch (error) {
     console.error('Error adding chapter:', error);
   }
@@ -59,7 +57,7 @@ updateUserProgress(chapterId: string, userId: string, updatedProgress: number): 
         } else {
           chapter.progress.push({ userId, progress: updatedProgress });
         }
-        this.chapterSubject.next(this.chapters);
+        this.chapterSubject.next([chapter]);
         return this.firestoreService.updateData('chapters', chapterId, chapter);
       } else {
         throw new Error('Chapter not found');
@@ -72,8 +70,8 @@ updateUserProgress(chapterId: string, userId: string, updatedProgress: number): 
 async deleteChapter(id: string): Promise<void> {
   try {
     await this.firestoreService.deleteData('chapters', id);
-    this.chapters = this.chapters.filter(chapter => chapter.id !== id);
-    this.chapterSubject.next(this.chapters);
+    const chapters = this.chapterSubject.value.filter(chapter => chapter.id !== id);
+    this.chapterSubject.next(chapters);
   } catch (error) {
     console.error('Error deleting chapter:', error);
   }

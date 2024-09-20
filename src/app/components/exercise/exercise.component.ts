@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ExerciseService } from '../../services/exercises/exercises.service';
-import { Observable, of, tap } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { Exercise } from '../../interfaces';
 import { CommonModule} from '@angular/common';
 import { FilterbySubjectIdPipe } from '../../pipes/filterby-subject-id.pipe';
@@ -19,7 +19,7 @@ export class ExerciseComponent implements OnInit {
   @Input() subjectId!: string;
   questions$: Observable<Exercise[]> = of([]);
   answerForms: { [questionId: string]: FormGroup } = {};
-  currentQuestion$!: Observable<Exercise | undefined>;
+  currentQuestion$!: Observable<Exercise>;
 
   constructor(
     private readonly _exerciseService: ExerciseService,
@@ -28,7 +28,7 @@ export class ExerciseComponent implements OnInit {
 
   ngOnInit() {
     this.currentQuestion$ = this._exerciseService.getCurrentExercise(this.subjectId).pipe(
-      tap(currentQuestion => {
+      map(currentQuestion => {
         if (currentQuestion) {
           // Initialize form based on the current question type
           if (currentQuestion.type == 'multiple_choice') {
