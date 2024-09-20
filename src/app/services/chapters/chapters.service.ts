@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { map, tap, switchMap, } from 'rxjs/operators';
-import { FirestoreService } from './firestore/firestore.service'; 
-import { Chapter } from '../interfaces';
+import { FirestoreService } from '../firestore/firestore.service'; 
+import { Chapter } from '../../interfaces';
 
 @Injectable({
   providedIn: 'root'

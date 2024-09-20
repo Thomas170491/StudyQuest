@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { Chapter } from '../../interfaces';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { ChapterService } from '../../services/chapters.service';
+import { ChapterService } from '../../services/chapters/chapters.service';
 import { Observable } from 'rxjs';
 
 @Component({
