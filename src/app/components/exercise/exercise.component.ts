@@ -6,31 +6,13 @@ import { CommonModule} from '@angular/common';
 import { FilterbySubjectIdPipe } from '../../pipes/filterby-subject-id.pipe';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonFooter, IonItem, IonList, IonRadio, IonSpinner, IonText, IonTextarea, IonToolbar } from '@ionic/angular/standalone';
 
 
-const UIElements = [
-  IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonList,
-  IonItem,
-  IonRadio,
-  IonTextarea,
-  IonText,
-  IonFooter,
-  IonCardTitle,
-  IonToolbar,
-  IonButton,
-  IonButtons,
-  IonSpinner
-]
+
 @Component({
   selector: 'app-exercise',
   standalone: true,
-  imports: [FilterbySubjectIdPipe, CommonModule, ReactiveFormsModule,FormsModule, ...UIElements],
+  imports: [FilterbySubjectIdPipe, CommonModule, ReactiveFormsModule,FormsModule],
   templateUrl: './exercise.component.html',
   styleUrls: ['./exercise.component.scss']
 })

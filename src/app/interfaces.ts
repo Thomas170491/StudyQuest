@@ -2,11 +2,11 @@ export interface User {
     id: string;
     username: string;
     email: string;
-    profilePictureUrl?: string;
+    profilePictureUrl: string | null;
     schoolYear: string;
-    group: string;
+    group: string; 
     isAuth: boolean;
-    completedExercises?: number;
+    completedExercises: Progress[];
   }
 
   export interface Chapter {

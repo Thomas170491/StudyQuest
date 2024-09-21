@@ -15,7 +15,7 @@ export class UserService {
   constructor(
     private readonly _firestoreService: FirestoreService
   ) {
-    this._firestoreService.loadData('users').pipe(
+    this._firestoreService.loadData('Users').pipe(
       map(data => {
       this.users = data;
       this.usersSubject.next(this.users);

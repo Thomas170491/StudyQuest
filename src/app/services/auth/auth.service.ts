@@ -1,22 +1,17 @@
-import { Component } from '@angular/core';
-import { getAuth,Auth, GoogleAuthProvider,signInWithPopup } from '@angular/fire/auth';
-import { Router } from '@angular/router'; 
-import { FirestoreService } from '../../services/firestore/firestore.service';
-import { UserService } from '../../services/users/user-service.service';
+import { Injectable } from '@angular/core';
+import {  Auth, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { FirestoreService } from '../firestore/firestore.service';
+import { UserService } from '../users/user-service.service';
+import { User, Progress } from '../../interfaces';
+import { Router } from '@angular/router';
 import { map } from 'rxjs';
-import { doc, getDoc } from 'firebase/firestore';
-import { Firestore } from '@angular/fire/firestore';
-import { Progress, User } from '../../interfaces';
 
-@Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+@Injectable({
+  providedIn: 'root'
 })
-export class LoginComponent {
-  
+export class AuthService {
+
   constructor(
     private router : Router,
     private readonly _auth : Auth,
