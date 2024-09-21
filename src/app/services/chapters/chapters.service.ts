@@ -39,7 +39,7 @@ export class ChapterService {
   // Add a new chapter
 async addChapter(chapter: Chapter[]): Promise<void> {
   try {
-    await this.firestoreService.addData('chapters', chapter);
+    await this.firestoreService.addData('Chapters', chapter);
     this.chapterSubject.next(chapter);
   } catch (error) {
     console.error('Error adding chapter:', error);

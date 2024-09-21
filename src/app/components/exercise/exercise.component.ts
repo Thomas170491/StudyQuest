@@ -6,11 +6,31 @@ import { CommonModule} from '@angular/common';
 import { FilterbySubjectIdPipe } from '../../pipes/filterby-subject-id.pipe';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonFooter, IonItem, IonList, IonRadio, IonSpinner, IonText, IonTextarea, IonToolbar } from '@ionic/angular/standalone';
 
+
+const UIElements = [
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonList,
+  IonItem,
+  IonRadio,
+  IonTextarea,
+  IonText,
+  IonFooter,
+  IonCardTitle,
+  IonToolbar,
+  IonButton,
+  IonButtons,
+  IonSpinner
+]
 @Component({
   selector: 'app-exercise',
   standalone: true,
-  imports: [FilterbySubjectIdPipe, CommonModule, ReactiveFormsModule,FormsModule],
+  imports: [FilterbySubjectIdPipe, CommonModule, ReactiveFormsModule,FormsModule, ...UIElements],
   templateUrl: './exercise.component.html',
   styleUrls: ['./exercise.component.scss']
 })
@@ -19,33 +39,33 @@ export class ExerciseComponent implements OnInit {
   @Input() subjectId!: string;
   questions$: Observable<Exercise[]> = of([]);
   answerForms: { [questionId: string]: FormGroup } = {};
-  currentQuestion$!: Observable<Exercise>;
+  currentQuestion$!: Observable<Exercise |undefined >;
 
   constructor(
     private readonly _exerciseService: ExerciseService,
     private readonly fb: FormBuilder
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    
     this.currentQuestion$ = this._exerciseService.getCurrentExercise(this.subjectId).pipe(
       map(currentQuestion => {
         if (currentQuestion) {
           // Initialize form based on the current question type
-          if (currentQuestion.type == 'multiple_choice') {
+          if (currentQuestion.type === 'multiple_choice') {
             this.answerForms[currentQuestion.id] = this.fb.group({
               selectedOption: ['']
             });
-          } else if (currentQuestion.type == 'long_answer') {
+          } else {
             this.answerForms[currentQuestion.id] = this.fb.group({
               answer: ['']
             });
           }
         }
-        return currentQuestion
+        return currentQuestion;
       })
     );
   }
-
   onNext() {
     this._exerciseService.goToNextExercise();
   }

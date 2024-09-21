@@ -1,3 +1,5 @@
+
+
 <div *ngIf="currentQuestion$ | async as currentQuestion; else loading">
   <form *ngIf="answerForms[currentQuestion.id]" [formGroup]="answerForms[currentQuestion.id]">
     <!-- Display the question -->

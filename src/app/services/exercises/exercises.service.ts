@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, firstValueFrom, from, Observable, of } from 'rxjs';
+import { map, tap, switchMap, catchError } from 'rxjs/operators';
 import { Exercise } from '../../interfaces';
-import { FirestoreService } from '../firestore/firestore.service'; // Assuming you have a FirestoreService defined
-
+import { FirestoreService } from '../firestore/firestore.service'; 
 @Injectable({
   providedIn: 'root'
 })
 export class ExerciseService {
-  private exercises: Exercise[] = [];
-  private exerciseSubject: BehaviorSubject<Exercise[]> = new BehaviorSubject<Exercise[]>(this.exercises);
+ 
+  private exerciseSubject: BehaviorSubject<Exercise[]> = new BehaviorSubject<Exercise[]>([]);
+  private currentLevel$ = new BehaviorSubject<number>(1);
   private currentIndex$ = new BehaviorSubject<number>(0);
 
   constructor(private firestoreService: FirestoreService) {
@@ -17,15 +17,15 @@ export class ExerciseService {
   }
 
   // Load exercises from Firestore
-  private loadExercises(): void {
-    this.firestoreService.loadData('exercises').pipe(
-      tap((data: Exercise[]) => {
-        this.exercises = data;
-        this.exerciseSubject.next(this.exercises);
-      })
-    )
+   async loadExercises(): Promise<void> {
+    try {
+      const data = await firstValueFrom(this.firestoreService.loadData('Exercises'));
+      this.exerciseSubject.next(data);
+      console.log('Exercises loaded:', data);
+    } catch (error) {
+      console.error('Error loading exercises:', error);
+    }
   }
-
   // Get all exercises
   getExercises(): Observable<Exercise[]> {
     return this.exerciseSubject.asObservable();
@@ -41,8 +41,8 @@ export class ExerciseService {
   // Get exercises by level
   getExercisesByLevel(level: number): Observable<Exercise[]> {
     return this.exerciseSubject.pipe(
-      map(exercises => exercises.filter(exercise => exercise.level === level))
-    );
+      map(exercises => exercises.filter(exercise => exercise.level === level)
+    )) 
   }
 
   // Get exercises by Subject
@@ -53,72 +53,110 @@ export class ExerciseService {
   }
 
   // Add a new exercise
-  async addExercise(exercise: Exercise): Promise<void> {
+  async addExercise(exercise: Exercise[]): Promise<void> {
     try {
-      await this.firestoreService.addData('exercises', exercise);
-      this.exercises.push(exercise);
-      this.exerciseSubject.next(this.exercises);
+      await this.firestoreService.addData('Exercises', exercise);
+      this.exerciseSubject.next(exercise);
     } catch (error) {
       console.error('Error adding exercise:', error);
     }
   }
 
   // Update an exercise
-  async updateExercise(id: string, updatedExercise: Exercise): Promise<void> {
-    try {
-      await this.firestoreService.updateData('exercises', id, updatedExercise);
-      const index = this.exercises.findIndex(exercise => exercise.id === id);
-      if (index !== -1) {
-        this.exercises[index] = updatedExercise;
-        this.exerciseSubject.next(this.exercises);
+ updateExercise(id: string, exercise: Exercise): Observable<Exercise[]> { 
+    return from(this.firestoreService.updateData('Exercises', id, exercise)).pipe( 
+      switchMap(() => { 
+        const exercises = this.exerciseSubject.value; 
+        const index = exercises.findIndex(e => e.id === id); 
+        exercises[index] = exercise; 
+        this.exerciseSubject.next(exercises); 
+        return this.exerciseSubject; 
+      }) 
+    );
+ }
+ getCurrentExercise(subjectId: string): Observable<Exercise | undefined> {
+  return this.currentLevel$.pipe(
+    switchMap(level => this.getExercisesByLevel(level)),
+    map(exercises => {
+      const filteredExercises = exercises.filter(exercise => exercise.subjectId === subjectId);
+      console.log('Filtered Exercises:', filteredExercises);
+      if (filteredExercises.length === 0) {
+        console.error('No exercises found for the given subjectId and level.');
+        return undefined;
       }
-    } catch (error) {
-      console.error('Error updating exercise:', error);
-    }
-  }
+      return filteredExercises[this.currentIndex$.value];
+    }),
+    catchError(error => {
+      console.error('Error getting current exercise:', error);
+      return of(undefined);
+    })
+  );
+}
 
   // Delete an exercise
   async deleteExercise(id: string): Promise<void> {
     try {
-      await this.firestoreService.deleteData('exercises', id);
-      this.exercises = this.exercises.filter(exercise => exercise.id !== id);
-      this.exerciseSubject.next(this.exercises);
+      await this.firestoreService.deleteData('Exercises', id);
+      const exercises = this.exerciseSubject.value.filter(exercise => exercise.id !== id);
+      this.exerciseSubject.next(exercises);
     } catch (error) {
       console.error('Error deleting exercise:', error);
     }
   }
 
-  getCurrentExercise(subjectId: string): Observable<Exercise> {
 
-    return this.currentIndex$.pipe(
-      switchMap(index => this.exerciseSubject.pipe(
-        map(exercises => exercises.filter(e => e.subjectId === subjectId)),
-        map(filteredExercises => filteredExercises[index])
-      )),
+  getRandomExerciseByLevel(): Observable<Exercise> {
+    return this.currentLevel$.pipe(
+      switchMap(level => this.exerciseSubject.pipe(
+        map(exercises => exercises.filter(exercise => exercise.level === level)),
+        map(filteredExercises => this.shuffleArray(filteredExercises)),
+        map(shuffledExercises => shuffledExercises[0]) // Select the first exercise from the shuffled array
+      ))
     );
   }
 
-  // Navigate to the next exercise
-  goToNextExercise(): void {
-    this.currentIndex$.pipe(
-      map(index => this.exercises.length > index + 1 ? index + 1 : index)
-    ).subscribe(nextIndex => this.currentIndex$.next(nextIndex));
+
+  checkAnswer(exercise: Exercise, answer: string): boolean {
+    return exercise.correctAnswer === answer
   }
 
-  // Navigate to the previous exercise
-  goToPreviousExercise(): void {
-    this.currentIndex$.pipe(
-      map(index => index > 0 ? index - 1 : index)
-    ).subscribe(previousIndex => this.currentIndex$.next(previousIndex));
+  // Shuffle an array
+  private shuffleArray(array: Exercise[]): Exercise[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
 
-  // Get the current index
-  getCurrentIndex(): Observable<number> {
-    return this.currentIndex$.asObservable();
+  // Proceed to the next level
+  proceedToNextLevel(): void {
+    this.currentLevel$.next(this.currentLevel$.value + 1);
   }
-
-  // Reset the index to the first exercise
-  resetIndex(): void {
-    this.currentIndex$.next(0);
+    // Navigate to the next exercise
+    goToNextExercise(): void {
+      this.currentLevel$.pipe(
+        switchMap(level => this.getExercisesByLevel(level).pipe(
+          map(exercises => ({ level, exercises }))
+        )),
+        switchMap(({ exercises }) => this.currentIndex$.pipe(
+          map(index => {
+            if (index < exercises.length - 1) {
+              return index + 1;
+            } else {
+              this.proceedToNextLevel();
+              return 0; // Reset index for the new level
+            }
+          }),
+          tap(index => this.currentIndex$.next(index))
+        ))
+      )
 }
+// Navigate to the previous exercise
+goToPreviousExercise(): void {
+ this.currentIndex$.pipe(
+    map(index => index > 0 ? index - 1 : index)
+ )
+  }
+  
 }
