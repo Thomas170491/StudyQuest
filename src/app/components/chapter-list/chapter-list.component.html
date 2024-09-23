@@ -1,15 +1,19 @@
-<div *ngIf="chapters$ | async as chapters; else loading">
-    <ul>
-      <li *ngFor="let chapter of chapters">
-       <button (click)="onChapterSelect(chapter.id)"
-             
-        >{{ chapter.title}} </button> 
-      </li>
-    </ul>
-</div>
-  
+
+
+  <ion-list-header>
+    <ion-title>Chapters</ion-title>
+  </ion-list-header>
+  <ng-container >
+  <ion-list *ngIf="chapters$ | async as chapters; else loading">
+    <ion-item *ngFor="let chapter of chapters">
+      <ion-button expand="full" (click)="onChapterSelect(chapter.id)">
+        {{ chapter.title }}
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ng-container>
+
   <ng-template #loading>
+    <ion-spinner name="crescent"></ion-spinner>
     <p>Loading chapters...</p>
   </ng-template>
-  
- 

@@ -19,5 +19,8 @@ export const appConfig: ApplicationConfig = {
         "authDomain":"studyquest-4cbe3.firebaseapp.com",
         "messagingSenderId":"795943998202"})),
     provideFirestore(() => getFirestore()),
-    provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideIonicAngular({})]
+    provideAuth(() => getAuth()), 
+    provideIonicAngular({})
+   
+  ]
 };

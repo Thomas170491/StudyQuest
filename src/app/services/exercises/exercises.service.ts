@@ -11,6 +11,13 @@ export class ExerciseService {
   private exerciseSubject: BehaviorSubject<Exercise[]> = new BehaviorSubject<Exercise[]>([]);
   private currentLevel$ = new BehaviorSubject<number>(1);
   private currentIndex$ = new BehaviorSubject<number>(0);
+  currentExercise$ = this.currentLevel$.pipe(
+    switchMap(level => this.exerciseSubject.pipe(
+      map(exercises => exercises.filter(exercise => exercise.level === level)),
+      map(filteredExercises => this.shuffleArray(filteredExercises)),
+      map(shuffledExercises => shuffledExercises[this.currentIndex$.value]) // Select the first exercise from the shuffled array
+    ))
+  );
 
   constructor(private firestoreService: FirestoreService) {
     this.loadExercises();
@@ -40,9 +47,10 @@ export class ExerciseService {
 
   // Get exercises by level
   getExercisesByLevel(level: number): Observable<Exercise[]> {
+    this.currentLevel$.next(level);
     return this.exerciseSubject.pipe(
-      map(exercises => exercises.filter(exercise => exercise.level === level)
-    )) 
+      map(exercises => exercises.filter(exercise => exercise.level === level))
+    );
   }
 
   // Get exercises by Subject
@@ -75,22 +83,14 @@ export class ExerciseService {
     );
  }
  getCurrentExercise(subjectId: string): Observable<Exercise | undefined> {
-  return this.currentLevel$.pipe(
-    switchMap(level => this.getExercisesByLevel(level)),
-    map(exercises => {
-      const filteredExercises = exercises.filter(exercise => exercise.subjectId === subjectId);
-      console.log('Filtered Exercises:', filteredExercises);
-      if (filteredExercises.length === 0) {
-        console.error('No exercises found for the given subjectId and level.');
-        return undefined;
-      }
-      return filteredExercises[this.currentIndex$.value];
-    }),
-    catchError(error => {
-      console.error('Error getting current exercise:', error);
-      return of(undefined);
-    })
-  );
+  const filteredExercise = this.exerciseSubject.value.findIndex(exercise => exercise.subjectId === subjectId);
+  console.log('Filtered Exercises:', filteredExercise);
+  if (filteredExercise <= -1) {
+    console.error('No exercises found for the given subjectId and level.');
+    throw new Error('No exercises found for the given subjectId and level.');
+  }
+  this.currentIndex$.next(filteredExercise);
+  return this.currentExercise$;
 }
 
   // Delete an exercise

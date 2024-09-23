@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
-import { IonButton, IonContent } from '@ionic/angular/standalone';
+import { IonButton, IonContent, IonItem, IonList } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-login',
@@ -9,7 +9,9 @@ import { IonButton, IonContent } from '@ionic/angular/standalone';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
+
 export class LoginComponent {
+
   
   constructor(
    

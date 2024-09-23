@@ -39,7 +39,10 @@ export class ProgressComponent  {
       })
     ); // convert this to an obeservable
     this.completedExercises = this.user$.pipe(
-      map(user => user?.completedExercises || 0)
+      map(user => {
+        const completedExercises = user?.completedExercises;
+        return Array.isArray(completedExercises) ? completedExercises.length : 0;
+      })
     ); // assuming completedExercises is a property in User
     this.progressPercentage = this.completedExercises.pipe(
       map(completedExercises => {

@@ -1,12 +1,17 @@
-
+<ion-content>
+  {{ chapiterId }}
   <div *ngIf="subjects$ | async as subjects; else loading">
-    <ul>
-      <li *ngFor="let subject of subjects | filterSubjectsByChapter : chapiterId">
-        <button (click) ="onSubjectSelect(subject.id)">{{ subject.title }}</button>
-      </li>
-    </ul>
+    <ion-list>
+      <ion-item *ngFor="let subject of subjects | filterSubjectsByChapter : chapiterId">
+        <ion-button expand="full" (click)="onSubjectSelect(subject.id)">
+          {{ subject.title }}
+        </ion-button>
+      </ion-item>
+    </ion-list>
   </div>
 
-<ng-template #loading>
-  <p>Loading subjects...</p>
-</ng-template>
+  <ng-template #loading>
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading subjects...</p>
+  </ng-template>
+</ion-content>
