@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserService } from '../users/user-service.service';
+import { User } from '../../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +14,12 @@ export class ProfileService {
 
 
 
-  async updateProfilePicture(userId: string, profilePictureUrl: string) {
-    this._userService.updateUser({ id: userId, profilePictureUrl });
- 
-   
-    
-  }
-
+  async updateProfilePicture(userId: string, Url: string, user: User) {
+        const { profilePictureUrl, ...restOfUser } = user;
+        this._userService.updateUser({ 
+          profilePictureUrl: Url, 
+          ...restOfUser,
+          id: userId 
+        });
+      }
+}
