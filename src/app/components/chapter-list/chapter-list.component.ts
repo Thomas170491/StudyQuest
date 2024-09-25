@@ -3,9 +3,9 @@ import { Chapter } from '../../interfaces';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { ChapterService } from '../../services/chapters/chapters.service';
 import { Observable } from 'rxjs';
-import { IonButton, IonContent, IonItem, IonLabel, IonList, IonListHeader, IonSpinner, IonTitle } from '@ionic/angular/standalone';
-
-
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonSpinner, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { book } from 'ionicons/icons';
 const UIElements = [
  IonContent,
  IonList,
@@ -15,6 +15,13 @@ const UIElements = [
  IonListHeader,
  IonLabel,
  IonTitle,
+ IonCard,
+ IonCardContent,
+ IonCardHeader,
+ IonHeader,
+ IonToolbar,
+ IonCardTitle,
+ IonIcon,
  
 
 ]
@@ -35,6 +42,9 @@ export class ChapterListComponent {
     private readonly _service: ChapterService,
   ) {
     this.chapters$ = this._service.getChapters();
+    addIcons({
+      book
+    })
   }
 
   @Output() selectedChapter: EventEmitter<string> = new EventEmitter<string>(); 

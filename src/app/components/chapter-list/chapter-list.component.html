@@ -1,19 +1,28 @@
-
-
-  <ion-list-header>
+<ion-header>
+  <ion-toolbar>
     <ion-title>Chapters</ion-title>
-  </ion-list-header>
-  <ng-container >
-  <ion-list *ngIf="chapters$ | async as chapters; else loading">
-    <ion-item *ngFor="let chapter of chapters">
-      <ion-button expand="full" (click)="onChapterSelect(chapter.id)">
-        {{ chapter.title }}
-      </ion-button>
-    </ion-item>
-  </ion-list>
-</ng-container>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ng-container>
+    <ion-list *ngIf="chapters$ | async as chapters; else loading">
+      <ion-card *ngFor="let chapter of chapters" class="chapter-card">
+        <ion-card-header>
+          <ion-card-title>{{ chapter.title }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-button expand="block" (click)="onChapterSelect(chapter.id)">
+            <ion-icon name="book" slot="start"></ion-icon>
+            View Chapter
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </ion-list>
+  </ng-container>
 
   <ng-template #loading>
     <ion-spinner name="crescent"></ion-spinner>
     <p>Loading chapters...</p>
   </ng-template>
+</ion-content>

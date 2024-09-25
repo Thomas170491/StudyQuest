@@ -28,7 +28,8 @@ export class ExerciseService {
     try {
       const data = await firstValueFrom(this.firestoreService.loadData('Exercises'));
       this.exerciseSubject.next(data);
-      console.log('Exercises loaded:', data);
+      //console.log('Exercises loaded:', data);
+      console.log('Exercises loaded:', this.exerciseSubject.value);
     } catch (error) {
       console.error('Error loading exercises:', error);
     }
@@ -83,7 +84,7 @@ export class ExerciseService {
     );
  }
  getCurrentExercise(subjectId: string): Observable<Exercise | undefined> {
-  const filteredExercise = this.exerciseSubject.value.findIndex(exercise => exercise.subjectId === subjectId);
+  const filteredExercise = this.exerciseSubject.value.findIndex(exercise => exercise.subjectId !== subjectId);
   console.log('Filtered Exercises:', filteredExercise);
   if (filteredExercise <= -1) {
     console.error('No exercises found for the given subjectId and level.');
@@ -97,7 +98,7 @@ export class ExerciseService {
   async deleteExercise(id: string): Promise<void> {
     try {
       await this.firestoreService.deleteData('Exercises', id);
-      const exercises = this.exerciseSubject.value.filter(exercise => exercise.id !== id);
+      const exercises = this.exerciseSubject.value.filter(exercise => exercise.id === id);
       this.exerciseSubject.next(exercises);
     } catch (error) {
       console.error('Error deleting exercise:', error);

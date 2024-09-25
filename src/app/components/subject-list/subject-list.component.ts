@@ -6,14 +6,22 @@ import { AsyncPipe, JsonPipe, NgFor, NgIf } from '@angular/common';
 import { ChapterListComponent } from '../chapter-list/chapter-list.component';;
 import { Router } from '@angular/router';
 import { FilterSubjectsByChapterPipe } from '../../pipes/FilterByChapter/filter-by-chapter-pipe.pipe';
-import { IonButton, IonContent, IonItem, IonList, IonSpinner } from '@ionic/angular/standalone';
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonList, IonSpinner, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 
 const UIElements = [
   IonContent,
   IonList,
   IonItem,
   IonButton,
-  IonSpinner
+  IonSpinner,
+  IonCard,
+  IonCardContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonCardHeader,
+  IonCardTitle,
+  IonIcon,
 ]
 @Component({
   selector: 'app-subject-list',

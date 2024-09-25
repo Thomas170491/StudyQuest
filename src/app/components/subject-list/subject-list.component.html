@@ -1,12 +1,23 @@
-<ion-content>
-  {{ chapiterId }}
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Subjects</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
   <div *ngIf="subjects$ | async as subjects; else loading">
     <ion-list>
-      <ion-item *ngFor="let subject of subjects | filterSubjectsByChapter : chapiterId">
-        <ion-button expand="full" (click)="onSubjectSelect(subject.id)">
-          {{ subject.title }}
-        </ion-button>
-      </ion-item>
+      <ion-card *ngFor="let subject of subjects | filterSubjectsByChapter : chapiterId" class="subject-card">
+        <ion-card-header>
+          <ion-card-title>{{ subject.title }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-button expand="block" (click)="onSubjectSelect(subject.id)">
+            <ion-icon name="book" slot="start"></ion-icon>
+            View Subject
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
     </ion-list>
   </div>
 

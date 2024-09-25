@@ -1,3 +1,24 @@
-<ion-content>
-    <ion-button (click)="authentificate()" expand="block">Login</ion-button>
-</ion-content>
+<ion-header>
+    <ion-toolbar>
+      <ion-title>Bienvenue dans StudyQuest!</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content class="ion-padding">
+    <div class="login-container">
+      <ion-card class="login-card">
+        <ion-card-header>
+          <ion-avatar class="avatar-center">
+            <img src="/home/thomas/Projet_MWAD/studyquest/src/assets/avatar.png" alt="User Avatar">
+          </ion-avatar>
+          <ion-card-title>Connexion</ion-card-title>
+        </ion-card-header>
+  
+        <ion-card-content>
+        
+  
+          <ion-button (click)="authentificate()" expand="block" class="ion-margin-top">Login</ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ion-content>

@@ -1,11 +1,27 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
-import { IonButton, IonContent, IonItem, IonList } from '@ionic/angular/standalone';
+import { IonAvatar, IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonContent, IonHeader, IonItem, IonList, IonRow, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 
+
+const UIElements = [
+  IonContent,
+  IonButton,
+  IonCol,
+  IonRow,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
+  IonCardTitle,
+  IonAvatar,
+  
+]
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [IonContent, IonButton],
+  imports: [...UIElements],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
