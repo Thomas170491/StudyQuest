@@ -1,18 +1,18 @@
-
-
-
-
-    <app-chapter-list (selectedChapter)="selectedChapterId = $event">
-
-    </app-chapter-list>
+<ion-header>
+    <ion-toolbar>
+      <ion-title> Please select a chapter </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content class="ion-padding">
+    <app-chapter-list (selectedChapter)="selectedChapterId = $event"></app-chapter-list>
   
     <app-subject-list *ngIf="selectedChapterId" 
                       (SubjectSelected)="selectedSubjectId = $event"
                       [chapiterId]="selectedChapterId">
-
-    
     </app-subject-list>
   
     <app-exercise *ngIf="selectedChapterId && selectedSubjectId" 
                   [subjectId]="selectedSubjectId">
     </app-exercise>
+  </ion-content>

@@ -1,10 +1,5 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Chapters</ion-title>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content class="ion-padding">
+
   <ng-container>
     <ion-list *ngIf="chapters$ | async as chapters; else loading">
       <ion-card *ngFor="let chapter of chapters" class="chapter-card">
@@ -25,4 +20,3 @@
     <ion-spinner name="crescent"></ion-spinner>
     <p>Loading chapters...</p>
   </ng-template>
-</ion-content>
