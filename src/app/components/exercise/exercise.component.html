@@ -1,45 +1,58 @@
+<app-progress></app-progress>
 
 
-<div *ngIf="currentQuestion$ | async as currentQuestion; else loading">
-  <form *ngIf="answerForms[currentQuestion.id]" [formGroup]="answerForms[currentQuestion.id]">
-    <!-- Display the question -->
-    <div class="question-text">
-      <p>{{ currentQuestion.question }}</p>
-    </div>
+  <div *ngIf="currentQuestion$ | async as currentQuestion; else loading">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Question</ion-card-title>
+      </ion-card-header>
 
-    <!-- Render different types of inputs based on question type -->
-    <ng-container [ngSwitch]="currentQuestion.type">
+      <ion-card-content>
+        <form *ngIf="answerForms[currentQuestion.id]" [formGroup]="answerForms[currentQuestion.id]">
+          <!-- Display the question -->
+          <div class="question-text">
+            <p>{{ currentQuestion.question }}</p>
+          </div>
 
-      <!-- Multiple Choice Question -->
-      <div *ngSwitchCase="'multiple_choice'">
-        <div *ngFor="let option of currentQuestion.options">
-          <label>
-            <input type="radio" formcontrolname="selectedOption" [value]="option">
-            {{ option }}
-          </label>
-        </div>
-      </div>
+          <!-- Render different types of inputs based on question type -->
+          <ng-container [ngSwitch]="currentQuestion.type">
 
-      <!-- Long Answer Question -->
-      <div *ngSwitchCase="'long_answer'">
-        <textarea formcontrolname="answer" placeholder="Your detailed answer..."></textarea>
-      </div>
+            <!-- Multiple Choice Question -->
+            <div *ngSwitchCase="'multiple_choice'">
+              <ion-list>
+                <ion-radio-group formControlName="selectedOption">
+                  <ion-item *ngFor="let option of currentQuestion.options">
+                    <ion-label>{{ option }}</ion-label>
+                    <ion-radio slot="start" [value]="option"></ion-radio>
+                  </ion-item>
+                </ion-radio-group>
+              </ion-list>
+            </div>
 
-    </ng-container>
+            <!-- Long Answer Question -->
+            <div *ngSwitchCase="'long_answer'">
+              <ion-textarea formControlName="answer" placeholder="Your detailed answer..."></ion-textarea>
+            </div>
 
-    <!-- Display feedback if needed -->
-    <div class="feedback" *ngIf="currentQuestion.feedback">
-      <p>{{ currentQuestion.feedback }}</p>
-    </div>
+          </ng-container>
 
-    <!-- Buttons for navigation and submission -->
-    <div class="navigation-buttons">
-      <button type="button" (click)="onPrevious()" [disabled]="isFirstQuestion()">Previous</button>
-      <button type="button" (click)="submitAnswer(currentQuestion.id)">Submit</button>
-      <button type="button" (click)="onNext()" [disabled]="isLastQuestion()">Next</button>
-    </div>
-  </form>
-</div>
-<ng-template #loading="">
-<p>Loading...</p>
-</ng-template>
+    
+
+          <!-- Buttons for navigation and submission -->
+          <div class="navigation-buttons">
+            <ion-button (click)="onPrevious()" [disabled]="isFirstQuestion()">Previous</ion-button>
+            <ion-button (click)="submitAnswer(currentQuestion.id) ">Submit</ion-button>
+           <div *ngIf="nextExercise$ | async as nextExercise">
+            {{nextExercise}}
+
+           </div>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <ng-template #loading>
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading question...</p>
+  </ng-template>

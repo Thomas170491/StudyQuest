@@ -13,7 +13,8 @@ export class ProfileService {
 
 
 
-  
+  async updateProfilePicture(userId: string, profilePictureUrl: string) {
+    this._userService.updateUser({ id: userId, profilePictureUrl });
  
    
     

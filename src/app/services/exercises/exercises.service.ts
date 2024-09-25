@@ -3,6 +3,7 @@ import { BehaviorSubject, firstValueFrom, from, Observable, of } from 'rxjs';
 import { map, tap, switchMap, catchError } from 'rxjs/operators';
 import { Exercise } from '../../interfaces';
 import { FirestoreService } from '../firestore/firestore.service'; 
+import { LifetokenserviceService } from '../lifetokenservice/lifetokenservice.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +20,11 @@ export class ExerciseService {
     ))
   );
 
-  constructor(private firestoreService: FirestoreService) {
+  constructor(
+    private firestoreService: FirestoreService,
+    private readonly lifetokenserviceService: LifetokenserviceService
+
+  ) {
     this.loadExercises();
   }
 
@@ -84,7 +89,7 @@ export class ExerciseService {
     );
  }
  getCurrentExercise(subjectId: string): Observable<Exercise | undefined> {
-  const filteredExercise = this.exerciseSubject.value.findIndex(exercise => exercise.subjectId !== subjectId);
+  const filteredExercise = this.exerciseSubject.value.findIndex(exercise => exercise.subjectId === subjectId);
   console.log('Filtered Exercises:', filteredExercise);
   if (filteredExercise <= -1) {
     console.error('No exercises found for the given subjectId and level.');
@@ -135,8 +140,8 @@ export class ExerciseService {
     this.currentLevel$.next(this.currentLevel$.value + 1);
   }
     // Navigate to the next exercise
-    goToNextExercise(): void {
-      this.currentLevel$.pipe(
+    goToNextExercise(): Observable<number> {
+      return this.currentLevel$.pipe(
         switchMap(level => this.getExercisesByLevel(level).pipe(
           map(exercises => ({ level, exercises }))
         )),
@@ -159,5 +164,43 @@ goToPreviousExercise(): void {
     map(index => index > 0 ? index - 1 : index)
  )
   }
+  private findExercise(questionId: string, exercises: Exercise[]): Exercise {
+    const exercise = exercises.find(e => e.id === questionId);
+    if (!exercise) {
+      throw new Error('Exercise not found');
+    }
+    return exercise;
+  }
   
+  private handleCorrectAnswer(exercise: Exercise): void {
+    console.log('Correct answer!');
+    alert('Bravo! Ta réponse est juste!' + exercise.feedback);
+    this.goToNextExercise();
+  }
+  
+  private handleIncorrectAnswer(): void {
+    alert('Désolé! Ta réponse est incorrecte! Réessaye encore');
+    this.lifetokenserviceService.decrementLifetokens();
+  }
+  
+  saveAnswer(questionId: string, answer: string): Observable<Exercise> {
+    console.log('Saving answer for questionId:', questionId);
+    console.log('Answer:', answer);
+  
+    if (!answer) {
+      throw new Error('Answer is required');
+    }
+    
+    return this.exerciseSubject.pipe(
+      map(exercises => this.findExercise(questionId, exercises)),
+      tap(exercise => {
+        console.log('Exercise correct answer:', exercise.correctAnswer);
+        if (exercise.correctAnswer === answer) {
+          this.handleCorrectAnswer(exercise);
+        } else {
+          this.handleIncorrectAnswer();
+        }
+      })
+    );
+  }
 }

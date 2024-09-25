@@ -30,7 +30,7 @@ export class LifetokensComponent {
     this.lifetokens$ = lifetokenserviceService.getlifetokens();
 
     addIcons({
-      'heart-sharp': heartSharp,
+      heartSharp,
     })
    }
    @Input() lifetokens!: number;
