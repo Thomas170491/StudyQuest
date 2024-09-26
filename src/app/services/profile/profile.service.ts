@@ -14,7 +14,7 @@ export class ProfileService {
 
 
 
-  async updateProfilePicture(userId: string, Url: string, user: User) {
+   updateProfilePicture(userId: string, Url: string, user: User) {
         const { profilePictureUrl, ...restOfUser } = user;
         this._userService.updateUser({ 
           profilePictureUrl: Url, 
