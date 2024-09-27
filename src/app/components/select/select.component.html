@@ -1,18 +1,45 @@
 <ion-header>
-    <ion-toolbar>
-      <ion-title> Please select a chapter </ion-title>
-    </ion-toolbar>
-  </ion-header>
-  
-  <ion-content class="ion-padding">
-    <app-chapter-list (selectedChapter)="selectedChapterId = $event"></app-chapter-list>
-  
-    <app-subject-list *ngIf="selectedChapterId" 
-                      (SubjectSelected)="selectedSubjectId = $event"
-                      [chapiterId]="selectedChapterId">
-    </app-subject-list>
-  
-    <app-exercise *ngIf="selectedChapterId && selectedSubjectId" 
-                  [subjectId]="selectedSubjectId">
-    </app-exercise>
-  </ion-content>
+  <ion-toolbar>
+    <ion-title>Please select a chapter</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <app-chapter-list (selectedChapter)="presentModal($event)"></app-chapter-list>
+</ion-content>
+
+<ion-modal #modal fullscreen="true">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Chapter Details</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeModal()">Go Back</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <app-subject-list *ngIf="selectedChapterId" (SubjectSelected)="presentSubjectModal($event)"
+        [chapiterId]="selectedChapterId">
+      </app-subject-list>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #subjectModal fullscreen="true">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Subject Details</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeSubjectModal()">Close</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <app-exercise *ngIf="selectedChapterId && selectedSubjectId" [subjectId]="selectedSubjectId">
+      </app-exercise>
+      Modal Content for Subject {{ selectedSubjectId }}
+    </ion-content>
+  </ng-template>
+</ion-modal>
