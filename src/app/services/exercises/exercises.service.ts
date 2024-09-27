@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom, from, Observable, of } from 'rxjs';
-import { map, tap, switchMap, catchError } from 'rxjs/operators';
+import { map, tap, switchMap, catchError, retryWhen } from 'rxjs/operators';
 import { Exercise } from '../../interfaces';
 import { FirestoreService } from '../firestore/firestore.service'; 
 import { LifetokenserviceService } from '../lifetokenservice/lifetokenservice.service';
@@ -203,4 +203,13 @@ goToPreviousExercise(): void {
       })
     );
   }
+
+  getExerciseFeedback(): string {
+    let feedback = '';
+    this.currentExercise$.pipe(map(exercise => {
+      feedback = exercise.feedback;
+    }
+    ));
+     return feedback;   
+    }
 }

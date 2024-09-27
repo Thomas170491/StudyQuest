@@ -41,7 +41,7 @@
           <!-- Buttons for navigation and submission -->
           <div class="navigation-buttons">
             <ion-button (click)="onPrevious()" [disabled]="isFirstQuestion()">Previous</ion-button>
-            <ion-button (click)="submitAnswer(currentQuestion.id) ">Submit</ion-button>
+            <ion-button (click)="submitAnswer(currentQuestion.id)">Submit</ion-button>
            <div *ngIf="nextExercise$ | async as nextExercise">
             {{nextExercise}}
 

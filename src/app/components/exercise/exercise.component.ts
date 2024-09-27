@@ -97,7 +97,7 @@ export class ExerciseComponent implements OnInit {
       },
       error: (err) => {
         console.error(`Failed to save answer for question ${questionId}:`, err);
-      }
+      },
     });
   }
        
