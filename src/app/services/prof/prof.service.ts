@@ -11,19 +11,18 @@ export class ProfService {
   constructor(
     private readonly _exerciseService: ExerciseService,
     // private readonly _gestureController: GestureController
+    
   ) {}
 
-  toggleVisibility(isVisible : boolean): void {
-    isVisible = !isVisible
-  }
 
-  getMessageIfCorrectAnswear(): string {
+  getMessageIfCorrectAnswer(): string {
     return this._exerciseService.getExerciseFeedback();
   }
 
-  getMessageIfWrongAnswear(): string {
+  getMessageIfWrongAnswer(): string {
     return 'Désolé, ce n\'est pas la bonne réponse! Essaye encore!';
   }
+
 
   // A voir avec Nico
 //   initSwipeGesture() {

@@ -213,5 +213,7 @@ goToPreviousExercise(): void {
      return feedback;   
     }
   
-    
+  getCurrentLevel(): number {
+    return this.currentLevel$.value;
+  }
 }
