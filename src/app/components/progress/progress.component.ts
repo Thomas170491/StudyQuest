@@ -1,55 +1,54 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { Chapter, User } from '../../interfaces';
 import { ChapterService } from '../../services/chapters/chapters.service';
 import { UserService } from '../../services/users/user-service.service';
-import { Chapter, User } from '../../interfaces';
-import { Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
 import { AsyncPipe, NgIf } from '@angular/common';
+
 
 @Component({
   selector: 'app-progress',
-  standalone: true,
   templateUrl: './progress.component.html',
   styleUrls: ['./progress.component.scss'],
+  standalone: true,
   imports: [AsyncPipe, NgIf]
 })
-export class ProgressComponent  {
-
-  userId: string;
-  chapterId: string;
-  completedExercises: Observable<number >;
+export class ProgressComponent implements OnInit { 
+  @Input() userId!: string;
+  @Input() chapterId!: string;
   totalExercises: number = 0;
-  progressPercentage: Observable<number>;
 
-  user$: Observable<User | undefined>;
-  chapter$: Observable<Chapter | undefined>;
+  user$!: Observable<User | undefined>;
+  chapter$!: Observable<Chapter | undefined>;
+  completedExercises$!: Observable<number>;
+  progressPercentage$!: Observable<number>;
 
   constructor(
     private readonly _chapterService: ChapterService,
     private readonly _userService: UserService
-  ) {
-    // Assume userId and chapterId are dynamically set; using default values here.
-    this.userId = '1'; // This should be dynamically fetched
-    this.chapterId = '1'; // This should be dynamically fetched
-    // Fetch the current user and chapter details
+  ) { }
+
+  ngOnInit(): void {
     this.user$ = this._userService.getUserById(this.userId);
     this.chapter$ = this._chapterService.getChapterById(this.chapterId).pipe(
       tap(chapter => {
         this.totalExercises = chapter?.totalExercises || 0;
       })
-    ); // convert this to an obeservable
-    this.completedExercises = this.user$.pipe(
+    );
+
+    this.completedExercises$ = this.user$.pipe(
       map(user => {
         const completedExercises = user?.completedExercises;
         return Array.isArray(completedExercises) ? completedExercises.length : 0;
       })
-    ); // assuming completedExercises is a property in User
-    this.progressPercentage = this.completedExercises.pipe(
+    );
+
+    this.progressPercentage$ = this.completedExercises$.pipe(
       map(completedExercises => {
         return this.totalExercises > 0 ? (completedExercises / this.totalExercises) * 100 : 0;
       })
     );
   }
-
-
 }

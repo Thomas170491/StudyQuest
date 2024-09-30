@@ -1,5 +1,5 @@
-<div *ngIf="progressPercentage | async as progress; else loading">
-    <p> {{ progressPercentage }}p>
+<div *ngIf="progressPercentage$ | async as progress; else loading">
+    <p> {{ progress }}%<p>
   </div>
   <ng-template #loading>
     <p>Loading progress bar...</p>

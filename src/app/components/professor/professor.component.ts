@@ -29,14 +29,19 @@ export class ProfessorComponent implements OnInit {
 
   isVisable : boolean  = true;
   message! : string ;
+ 
 
 
 
   constructor(
-    private readonly _profService: ProfService
-  ) {}
+    private readonly _profService: ProfService,
+    //private readonly _
+  ) {
+    //currentLevel : number = 
+  }
   ngOnInit(): void {
     this._profService.toggleVisibility(this.isVisable);
+
 
   }
   
