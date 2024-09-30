@@ -3,6 +3,7 @@ import { User } from '../../interfaces';
 import { Observable, BehaviorSubject, map, catchError, of, firstValueFrom, from, switchMap } from 'rxjs';
 import { FirestoreService } from '../firestore/firestore.service';
 import { Auth } from '@angular/fire/auth';
+import { doc, Firestore, setDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class UserService {
   
   constructor(
     private readonly _firestoreService: FirestoreService,
-    private readonly _auth: Auth
+    private readonly _auth: Auth,
+    private readonly _firestore : Firestore
   ) {
       this.loadUsers()    
     };
@@ -38,14 +40,25 @@ export class UserService {
   }
 
   // Add a new user
-  async addUser(user: User[]): Promise<void> {
+  async addUser(user: User): Promise<void> {
     try{
-      await this._firestoreService.addData('Users',{...user})
-      this.usersSubject.next(user)
+      const currentUser = this._auth.currentUser
+      console.log(currentUser)
+      if (currentUser) {
+        const fbDoc = doc(this._firestore,`Users/${currentUser.uid}`)
+        await setDoc(fbDoc, {...user}).catch(err => console.error('Error adding User to database:', err));
+        const users = this.usersSubject.value;
+        users.push(user);
+        this.usersSubject.next(users);
+      } else {
+        throw new Error('No authenticated user found');
+      }
+      const users = this.usersSubject.value;
+      users.push(user);
+      this.usersSubject.next(users);
     }catch(error){
       console.error('Error adding user:', error)
     }
- 
   }
 
   // Update an existing user
@@ -75,7 +88,9 @@ export class UserService {
       
       map(users => {
         if(users){
+          console.log('Hello from connected Users')
           return users.filter(user => user.isAuth === true);
+          
         }
         return undefined;
       }),

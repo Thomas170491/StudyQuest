@@ -44,7 +44,7 @@ export class AuthService {
         };
 
         if (!userDoc.exists()) {
-          this._userService.addUser([userExist]);
+          this._userService.addUser(userExist);
           
         } else {
           const existingUserData = userDoc.data() as User; 
