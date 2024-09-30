@@ -44,13 +44,13 @@ export class AuthService {
         };
 
         if (!userDoc.exists()) {
-          this._userService.addUser(userExist);
-          this._firestoreService.addData('Users', userExist);
+          this._userService.addUser([userExist]);
+          
         } else {
           const existingUserData = userDoc.data() as User; 
           completedExercises = existingUserData.completedExercises;
-          this._userService.updateUser({ ...existingUserData, isAuth: true, completedExercises : completedExercises });
-          this._firestoreService.updateData('Users', user.uid, { isAuth : true, completedExercises : completedExercises });
+          this._userService.updateUser({ ...existingUserData, isAuth: true, completedExercises : completedExercises }, existingUserData.id);
+          
         }
         this.router.navigate(['/select']);
       }
@@ -66,7 +66,7 @@ export class AuthService {
           this._userService.getUserById(userId).pipe(
             map(user => {
             if (user) {
-              this._userService.updateUser({ ...user, isAuth: false });
+              this._userService.updateUser({ ...user, isAuth: false }, user.id);
             }
           }));
         }
