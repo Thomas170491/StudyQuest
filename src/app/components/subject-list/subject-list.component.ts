@@ -43,7 +43,7 @@ export class SubjectListComponent {
     this.subjects$ = this._service.getSubjects(); 
 
   }
-  @Input() chapiterId!: string;
+  @Input() chapterId!: string;
   @Output() SubjectSelected: EventEmitter<string> = new EventEmitter<string>(); 
 
 

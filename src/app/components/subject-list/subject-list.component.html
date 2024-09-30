@@ -2,7 +2,7 @@
 
   <div *ngIf="subjects$ | async as subjects; else loading">
     <ion-list>
-      <ion-card *ngFor="let subject of subjects | filterSubjectsByChapter : chapiterId" class="subject-card">
+      <ion-card *ngFor="let subject of subjects | filterSubjectsByChapter:chapterId" class="subject-card">
         <ion-card-header>
           <ion-card-title>{{ subject.title }}</ion-card-title>
         </ion-card-header>

@@ -9,7 +9,7 @@
 </ion-content>
 
 <ion-modal #modal fullscreen="true">
-  <ng-template>
+  <ng-template #chapterDetails>
     <ion-header>
       <ion-toolbar>
         <ion-title>Chapter Details</ion-title>
@@ -20,14 +20,15 @@
     </ion-header>
     <ion-content class="ion-padding">
       <app-subject-list *ngIf="selectedChapterId" (SubjectSelected)="presentSubjectModal($event)"
-        [chapiterId]="selectedChapterId">
+        [chapterId]="selectedChapterId">
       </app-subject-list>
     </ion-content>
   </ng-template>
+  <ng-container *ngTemplateOutlet="chapterDetails"></ng-container>
 </ion-modal>
 
 <ion-modal #subjectModal fullscreen="true">
-  <ng-template>
+  <ng-template #subjectDetails>
     <ion-header>
       <ion-toolbar>
         <ion-title>Subject Details</ion-title>
@@ -37,9 +38,8 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <app-exercise *ngIf="selectedChapterId && selectedSubjectId" [subjectId]="selectedSubjectId">
-      </app-exercise>
-      Modal Content for Subject {{ selectedSubjectId }}
+      <!-- Add content for subject details here -->
     </ion-content>
   </ng-template>
+  <ng-container *ngTemplateOutlet="subjectDetails"></ng-container>
 </ion-modal>

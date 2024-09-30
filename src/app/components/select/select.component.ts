@@ -2,8 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { ChapterListComponent } from '../chapter-list/chapter-list.component';
 import { SubjectListComponent } from '../subject-list/subject-list.component';
 import { ExerciseComponent } from '../exercise/exercise.component';
-import { AsyncPipe, NgIf } from '@angular/common';
-import {  AnimationController, IonButton, IonButtons, IonContent, IonHeader, IonModal, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
+import {  IonButton, IonButtons, IonContent, IonHeader, IonModal, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { LifetokensComponent } from "../lifetokens/lifetokens.component";
 import { Observable } from 'rxjs';
 
@@ -20,7 +20,7 @@ const UIElements = [
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [ChapterListComponent, SubjectListComponent, ExerciseComponent, LifetokensComponent, NgIf, AsyncPipe, ...UIElements],
+  imports: [ChapterListComponent, SubjectListComponent, ExerciseComponent, LifetokensComponent, NgIf, AsyncPipe, NgTemplateOutlet, ...UIElements],
   templateUrl: './select.component.html',
   styleUrl: './select.component.scss',
 
@@ -37,7 +37,7 @@ export class SelectComponent {
   @ViewChild('modal') modal!: IonModal;
   @ViewChild('subjectModal') subjectModal!: IonModal;
 
-  constructor(private animationCtrl: AnimationController) {}
+  constructor() {}
 
   presentModal(chapterId : string) {
     this.selectedChapterId= chapterId

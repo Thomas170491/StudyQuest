@@ -47,11 +47,18 @@ export interface User {
     completedExercises: number;
     totalExercises: number;
     progressPercentage: number;
+    badges: Reward[];
+    trophies: Reward[];
+    tokens: number;
+    mastered: boolean;
   }
   export interface Reward {
     id: string;
     type: 'badge' | 'token' | 'trophy';
+    name : string;    
+    value? : number;
     description: string;
+    icon : string;
     criteria: string; // Conditions pour obtenir la récompense
   }
   export interface Notification {

@@ -16,7 +16,7 @@ import { AsyncPipe, NgIf } from '@angular/common';
   imports: [AsyncPipe, NgIf]
 })
 export class ProgressComponent implements OnInit { 
-  @Input() userId!: string;
+  @Input() userId!: string; 
   @Input() chapterId!: string;
   totalExercises: number = 0;
 
@@ -28,19 +28,32 @@ export class ProgressComponent implements OnInit {
   constructor(
     private readonly _chapterService: ChapterService,
     private readonly _userService: UserService
-  ) { }
+  ) { 
+    this.user$ = this._userService.getCurrentUser().pipe(
+      map(user => {
+        console.log('User in user$ :', user)
+        if (user?.id) {
+          this.userId = user.id;
+        }
+        return user;
+      })
+    );
+  }
 
   ngOnInit(): void {
-    this.user$ = this._userService.getUserById(this.userId);
+    
     this.chapter$ = this._chapterService.getChapterById(this.chapterId).pipe(
       tap(chapter => {
+        console.log('Chapter:', chapter)
         this.totalExercises = chapter?.totalExercises || 0;
       })
     );
 
     this.completedExercises$ = this.user$.pipe(
       map(user => {
+        console.log('User :', user)
         const completedExercises = user?.completedExercises;
+        console.log(completedExercises)
         return Array.isArray(completedExercises) ? completedExercises.length : 0;
       })
     );
@@ -50,5 +63,6 @@ export class ProgressComponent implements OnInit {
         return this.totalExercises > 0 ? (completedExercises / this.totalExercises) * 100 : 0;
       })
     );
+    
   }
 }
