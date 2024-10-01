@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { Reward, Progress } from '../../interfaces' 
+import { producerUpdateValueVersion } from '@angular/core/primitives/signals';
+import { ValueAccessor } from '@ionic/angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RewardService {
   private progress: Progress[] = [];
-  private tokens: number = 0;
-  private badges: Reward[] = [];
-  private trophies: Reward[] = [];
+
 
   // BehaviorSubject pour suivre les changements en temps réel
-  private tokensSubject = new BehaviorSubject<number>(this.tokens);
-  private badgesSubject = new BehaviorSubject<Reward[]>(this.badges);
-  private trophiesSubject = new BehaviorSubject<Reward[]>(this.trophies);
+  private tokensSubject = new BehaviorSubject<number>(0);
+  private badgesSubject = new BehaviorSubject<Reward[]>([]);
+  private trophiesSubject = new BehaviorSubject<Reward[]>([]);
 
   constructor() {}
 
@@ -24,8 +24,10 @@ export class RewardService {
   }
 
   addTokens(value: number) {
-    this.tokens += value;
-    this.tokensSubject.next(this.tokens);
+    const tokens = this.tokensSubject.value  
+    const updatedTokens= tokens + value;
+    this.tokensSubject.next(updatedTokens)
+    
   }
 
   // Méthodes pour gérer les badges
@@ -33,9 +35,14 @@ export class RewardService {
     return this.badgesSubject.asObservable();
   }
 
+  addBadges(badge: Reward[]) {
+    this.badgesSubject.next(badge)
+  }
+
   addBadge(badge: Reward) {
-    this.badges.push(badge);
-    this.badgesSubject.next(this.badges);
+    const badges = this.badgesSubject.value;
+    badges.push(badge);
+    this.badgesSubject.next(badges);
   }
 
   // Méthodes pour gérer les trophées
@@ -43,9 +50,13 @@ export class RewardService {
     return this.trophiesSubject.asObservable();
   }
 
-  addTrophy(trophy: Reward) {
-    this.trophies.push(trophy);
-    this.trophiesSubject.next(this.trophies);
+  addTrophy(trophy: Reward)  {
+    const trophies = this.trophiesSubject.value;
+    trophies.push(trophy);
+    this.trophiesSubject.next(trophies);
+  }
+  addTrophies(trophy : Reward[]){
+    this.trophiesSubject.next(trophy)
   }
 
   // Gérer la progression du chapitre

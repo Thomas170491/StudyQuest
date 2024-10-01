@@ -46,7 +46,7 @@ export class SelectComponent {
 
   presentSubjectModal(subjectId : string) {
     this.selectedSubjectId= subjectId
-    this.modal.present();
+    this.subjectModal.present();
   }
 
   closeModal() {

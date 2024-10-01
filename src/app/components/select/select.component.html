@@ -38,7 +38,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <!-- Add content for subject details here -->
+      <app-exercise *ngIf="selectedSubjectId" [subjectId]="selectedSubjectId"></app-exercise>
     </ion-content>
   </ng-template>
   <ng-container *ngTemplateOutlet="subjectDetails"></ng-container>

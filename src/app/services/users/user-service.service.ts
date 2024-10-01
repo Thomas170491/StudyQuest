@@ -62,16 +62,14 @@ export class UserService {
   }
 
   // Update an existing user
-  updateUser(updatedUser: User, id :string): Observable<User[]> {
-    return from(this._firestoreService.updateData('Users',id, updatedUser)).pipe(
-      switchMap(() => {
-        const users = this.usersSubject.value;
-        const index = users.findIndex(s => s.id === id)
-        users[index] = updatedUser;
-        this.usersSubject.next(users)
-        return this.usersSubject
-      })
-    )
+  async updateUser(updatedUser: User, id :string): Promise<User[]> {
+    await this._firestoreService.updateData('Users',id, updatedUser)
+    const users = this.usersSubject.value;
+    const index = users.findIndex(s => s.id === id)
+    users[index] = updatedUser;
+    this.usersSubject.next(users)
+    return this.usersSubject.value 
+    
   }
   // Delete a user
   async deleteUser(id: string): Promise<void> {

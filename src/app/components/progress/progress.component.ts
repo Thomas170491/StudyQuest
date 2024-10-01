@@ -61,7 +61,7 @@ export class ProgressComponent implements OnInit {
     this.progressPercentage$ = this.completedExercises$.pipe(
       map(completedExercises => {
         return this.totalExercises > 0 ? (completedExercises / this.totalExercises) * 100 : 0;
-      })
+              }),tap(console.log)
     );
     
   }

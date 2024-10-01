@@ -53,8 +53,9 @@ export class AuthService {
           
         }
         this.router.navigate(['/select']);
-      }
+      }else{
       this.router.navigate(['/home']);
+    }
       }
 
       signOut = async () => {

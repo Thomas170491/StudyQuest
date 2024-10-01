@@ -4,6 +4,7 @@ import { map, tap, switchMap, catchError, retryWhen } from 'rxjs/operators';
 import { Exercise } from '../../interfaces';
 import { FirestoreService } from '../firestore/firestore.service'; 
 import { LifetokenserviceService } from '../lifetokenservice/lifetokenservice.service';
+import { UserService } from '../users/user-service.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -22,7 +23,9 @@ export class ExerciseService {
 
   constructor(
     private firestoreService: FirestoreService,
-    private readonly lifetokenserviceService: LifetokenserviceService
+    private readonly lifetokenserviceService: LifetokenserviceService,
+    private readonly _userService : UserService
+    
 
   ) {
     this.loadExercises();
@@ -139,24 +142,20 @@ export class ExerciseService {
   proceedToNextLevel(): void {
     this.currentLevel$.next(this.currentLevel$.value + 1);
   }
-    // Navigate to the next exercise
-    goToNextExercise(): Observable<number> {
-      return this.currentLevel$.pipe(
-        switchMap(level => this.getExercisesByLevel(level).pipe(
-          map(exercises => ({ level, exercises }))
-        )),
-        switchMap(({ exercises }) => this.currentIndex$.pipe(
-          map(index => {
-            if (index < exercises.length - 1) {
-              return index + 1;
-            } else {
-              this.proceedToNextLevel();
-              return 0; // Reset index for the new level
-            }
-          }),
-          tap(index => this.currentIndex$.next(index))
-        ))
-      )
+    // Navigate to the next exercise(
+    async goToNextExercise(): Promise<number> {
+      const level = await firstValueFrom(this.currentLevel$)
+      const exercises = await firstValueFrom(this.getExercisesByLevel(level))
+      const currentIndex = await firstValueFrom(this.currentIndex$)
+      if (currentIndex < exercises.length - 1) {
+         this.currentIndex$.next(currentIndex + 1);
+      } else {
+        this.proceedToNextLevel();
+         this.currentIndex$.next(0); // Reset index for the new level
+      }
+      return this.currentIndex$.value
+
+  
 }
 // Navigate to the previous exercise
 goToPreviousExercise(): void {
@@ -172,10 +171,10 @@ goToPreviousExercise(): void {
     return exercise;
   }
   
-  private handleCorrectAnswer(exercise: Exercise): void {
+  private async handleCorrectAnswer(exercise: Exercise): Promise<void>  {
     console.log('Correct answer!');
     alert('Bravo! Ta réponse est juste!' + exercise.feedback);
-    this.goToNextExercise();
+    await this.goToNextExercise();
   }
   
   private handleIncorrectAnswer(): void {
@@ -193,12 +192,23 @@ goToPreviousExercise(): void {
     
     return this.exerciseSubject.pipe(
       map(exercises => this.findExercise(questionId, exercises)),
-      tap(exercise => {
+      tap(async exercise => {
         console.log('Exercise correct answer:', exercise.correctAnswer);
         if (exercise.correctAnswer === answer) {
-          this.handleCorrectAnswer(exercise);
+          await this.handleCorrectAnswer(exercise);
+          const currentUser = await firstValueFrom(this._userService.getCurrentUser())
+          if(!currentUser){
+            throw new Error('No users found')
+          }
+          currentUser.completedExercises.push({
+            userId : currentUser.id,
+            chapterId : '',
+            subjectId : exercise.subjectId
+
+          })
+          this._userService.updateUser(currentUser, currentUser.id)
         } else {
-          this.handleIncorrectAnswer();
+           this.handleIncorrectAnswer();
         }
       })
     );
