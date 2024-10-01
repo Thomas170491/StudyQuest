@@ -44,13 +44,13 @@ export interface User {
     userId: string;
     chapterId: string;
     subjectId: string;
-    completedExercises: number;
-    totalExercises: number;
-    progressPercentage: number;
-    badges: Reward[];
-    trophies: Reward[];
-    tokens: number;
-    mastered: boolean;
+    completedExercises?: number;
+    totalExercises?: number;
+    progressPercentage?: number;
+    badges?: Reward[];
+    trophies?: Reward[];
+    tokens?: number;
+    mastered?: boolean;
   }
   export interface Reward {
     id: string;
