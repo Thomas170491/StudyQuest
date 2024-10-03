@@ -10,6 +10,8 @@ import { Chapter } from '../../interfaces';
 export class ChapterService {
  
   private chapterSubject: BehaviorSubject<Chapter[]> = new BehaviorSubject<Chapter[]>([]);
+  private currentChapterId : BehaviorSubject<string> = new BehaviorSubject<string>('')
+  public readonly currentChapterId$ = this.currentChapterId.asObservable()
 
   constructor(private firestoreService: FirestoreService) {
     this.loadChapters();
@@ -31,6 +33,7 @@ export class ChapterService {
 
   // Get a single chapter by ID
   getChapterById(id: string): Observable<Chapter | undefined> {
+    this.currentChapterId.next(id)
     return this.chapterSubject.pipe(
       map(chapters => chapters.find(chapter => chapter.id === id))
     );

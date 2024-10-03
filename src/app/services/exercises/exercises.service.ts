@@ -5,6 +5,7 @@ import { Exercise } from '../../interfaces';
 import { FirestoreService } from '../firestore/firestore.service'; 
 import { LifetokenserviceService } from '../lifetokenservice/lifetokenservice.service';
 import { UserService } from '../users/user-service.service';
+import { ChapterService } from '../chapters/chapters.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -16,6 +17,16 @@ export class ExerciseService {
   currentExercise$ = this.currentLevel$.pipe(
     switchMap(level => this.exerciseSubject.pipe(
       map(exercises => exercises.filter(exercise => exercise.level === level)),
+      map(exercises => exercises.filter(async (e)=> {
+        const user = await firstValueFrom(this._userService.getCurrentUser())
+        if(!user){
+          throw new Error('User not found')
+        }
+        return user.completedExercises.find(ce => {
+          ce.exerciseId !== e.id 
+        })
+      }
+      )),
       map(filteredExercises => this.shuffleArray(filteredExercises)),
       map(shuffledExercises => shuffledExercises[this.currentIndex$.value]) // Select the first exercise from the shuffled array
     ))
@@ -24,8 +35,8 @@ export class ExerciseService {
   constructor(
     private firestoreService: FirestoreService,
     private readonly lifetokenserviceService: LifetokenserviceService,
-    private readonly _userService : UserService
-    
+    private readonly _userService : UserService,
+    private readonly _chapterService : ChapterService
 
   ) {
     this.loadExercises();
@@ -202,8 +213,10 @@ goToPreviousExercise(): void {
           }
           currentUser.completedExercises.push({
             userId : currentUser.id,
-            chapterId : '',
-            subjectId : exercise.subjectId
+            chapterId : await firstValueFrom(this._chapterService.currentChapterId$),
+            subjectId : exercise.subjectId,
+            exerciseId : exercise.id
+
 
           })
           this._userService.updateUser(currentUser, currentUser.id)

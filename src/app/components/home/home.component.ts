@@ -1,12 +1,16 @@
 import { Component } from '@angular/core';
  import { Router } from '@angular/router';
+import { IonButton, IonContent } from '@ionic/angular/standalone';
 
-
+const UIElements = [
+  IonContent,
+  IonButton
+]
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [...UIElements],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
