@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Chapter, User } from '../../interfaces';
@@ -29,40 +28,46 @@ export class ProgressComponent implements OnInit {
     private readonly _chapterService: ChapterService,
     private readonly _userService: UserService
   ) { 
+
+      };
+  
+
+  ngOnInit(): void {
     this.user$ = this._userService.getCurrentUser().pipe(
       map(user => {
-        console.log('User in user$ :', user)
         if (user?.id) {
           this.userId = user.id;
         }
-        return user;
-      })
-    );
-  }
-
-  ngOnInit(): void {
+        return user;}))
+      
     
     this.chapter$ = this._chapterService.getChapterById(this.chapterId).pipe(
-      tap(chapter => {
+      map(chapter => {
         console.log('Chapter:', chapter)
         this.totalExercises = chapter?.totalExercises || 0;
+        console.log('Total exercises:', this.totalExercises);
+        return chapter;
       })
     );
 
     this.completedExercises$ = this.user$.pipe(
       map(user => {
-        console.log('User :', user)
+     
         const completedExercises = user?.completedExercises;
-        console.log(completedExercises)
+        console.log('Completed Exercises:', completedExercises)
         return Array.isArray(completedExercises) ? completedExercises.length : 0;
       })
     );
 
+
     this.progressPercentage$ = this.completedExercises$.pipe(
       map(completedExercises => {
-        return this.totalExercises > 0 ? (completedExercises / this.totalExercises) * 100 : 0;
-              }),tap(console.log)
+        console.log('Completed Exercises Count:', completedExercises);
+        const progress = this.totalExercises > 0 ? (completedExercises / this.totalExercises) * 100 : 0;
+        console.log('Progress Percentage:', progress);
+        return progress;
+      }),
+      tap(console.log)
     );
-    
   }
-}
+  }

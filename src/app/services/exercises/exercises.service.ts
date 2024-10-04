@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom, from, Observable, of } from 'rxjs';
-import { map, tap, switchMap, catchError, retryWhen } from 'rxjs/operators';
+import { map, tap, switchMap} from 'rxjs/operators';
 import { Exercise } from '../../interfaces';
 import { FirestoreService } from '../firestore/firestore.service'; 
 import { LifetokenserviceService } from '../lifetokenservice/lifetokenservice.service';
@@ -22,7 +22,8 @@ export class ExerciseService {
         if(!user){
           throw new Error('User not found')
         }
-        return user.completedExercises.find(ce => {
+        console.log('Exercies :', exercises)
+        return user.completedExercises?.find(ce => {
           ce.exerciseId !== e.id 
         })
       }
@@ -47,6 +48,7 @@ export class ExerciseService {
     try {
       const data = await firstValueFrom(this.firestoreService.loadData('Exercises'));
       this.exerciseSubject.next(data);
+      this.currentIndex$.next(0);
       //console.log('Exercises loaded:', data);
       console.log('Exercises loaded:', this.exerciseSubject.value);
     } catch (error) {
@@ -81,10 +83,10 @@ export class ExerciseService {
   }
 
   // Add a new exercise
-  async addExercise(exercise: Exercise[]): Promise<void> {
+  async addExercise(exercise: Exercise): Promise<void> {
     try {
-      await this.firestoreService.addData('Exercises', exercise);
-      this.exerciseSubject.next(exercise);
+      await this.firestoreService.addData('Exercises', {...exercise});
+      this.exerciseSubject.next([...this.exerciseSubject.value, exercise]);
     } catch (error) {
       console.error('Error adding exercise:', error);
     }
@@ -196,7 +198,7 @@ goToPreviousExercise(): void {
   saveAnswer(questionId: string, answer: string): Observable<Exercise> {
     console.log('Saving answer for questionId:', questionId);
     console.log('Answer:', answer);
-  
+    
     if (!answer) {
       throw new Error('Answer is required');
     }
@@ -211,14 +213,22 @@ goToPreviousExercise(): void {
           if(!currentUser){
             throw new Error('No users found')
           }
-          currentUser.completedExercises.push({
+          console.log('Exercise Id', {
             userId : currentUser.id,
             chapterId : await firstValueFrom(this._chapterService.currentChapterId$),
             subjectId : exercise.subjectId,
             exerciseId : exercise.id
 
 
+          });
+          const completedExercises = currentUser.completedExercises || [];
+          completedExercises.push({
+            userId : currentUser.id,
+            chapterId : await firstValueFrom(this._chapterService.currentChapterId$),
+            subjectId : exercise.subjectId,
+            exerciseId : exercise.id
           })
+          currentUser.completedExercises = completedExercises
           this._userService.updateUser(currentUser, currentUser.id)
         } else {
            this.handleIncorrectAnswer();

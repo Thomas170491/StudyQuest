@@ -1,4 +1,4 @@
-<app-progress></app-progress>
+<app-progress *ngIf="currentChapterId$ | async as currentChapterId" [chapterId]="currentChapterId"></app-progress>
 
 
   <div *ngIf="currentQuestion$ | async as currentQuestion; else loading">

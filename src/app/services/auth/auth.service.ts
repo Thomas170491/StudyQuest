@@ -48,8 +48,10 @@ export class AuthService {
           
         } else {
           const existingUserData = userDoc.data() as User; 
-          completedExercises = existingUserData.completedExercises;
-          this._userService.updateUser({ ...existingUserData, isAuth: true, completedExercises : completedExercises }, existingUserData.id);
+          console.log(existingUserData);
+          completedExercises = existingUserData.completedExercises ?? [];
+          
+          await this._userService.updateUser({ ...existingUserData, isAuth: true, completedExercises : completedExercises }, existingUserData.id);
           
         }
         this.router.navigate(['/select']);

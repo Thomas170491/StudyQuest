@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { Reward, Progress } from '../../interfaces' 
-import { producerUpdateValueVersion } from '@angular/core/primitives/signals';
-import { ValueAccessor } from '@ionic/angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -12,9 +10,9 @@ export class RewardService {
 
 
   // BehaviorSubject pour suivre les changements en temps réel
-  private tokensSubject = new BehaviorSubject<number>(0);
-  private badgesSubject = new BehaviorSubject<Reward[]>([]);
-  private trophiesSubject = new BehaviorSubject<Reward[]>([]);
+  private tokensSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  private badgesSubject: BehaviorSubject<Reward[]> = new BehaviorSubject<Reward[]>([]);
+  private trophiesSubject :BehaviorSubject<Reward[]> = new BehaviorSubject<Reward[]>([]);
 
   constructor() {}
 
@@ -64,24 +62,22 @@ export class RewardService {
     return this.progress.find((p) => p.chapterId === chapterId);
   }
 
-  updateProgress(chapterId: string, percentage: number) {
-    const chapterProgress = this.progress.find(p => p.chapterId === chapterId);
-    if (chapterProgress) {
-      chapterProgress.progressPercentage = percentage;
-      chapterProgress.mastered = percentage >= 80;
-    } else {
-      this.progress.push({
-        chapterId,
-        subjectId: '', // à compléter
-        progressPercentage: percentage,
-        badges: [],
-        trophies: [],
-        tokens: 0,
-        mastered: percentage >= 80,
-        userId: '',
-        completedExercises: 0,
-        totalExercises: 0
-      });
-    }
+  getAllRewards(): Observable<{ tokens: number, badges: Reward[], trophies: Reward[] }> {
+    return combineLatest([
+      this.tokensSubject.asObservable(),
+      this.badgesSubject.asObservable(),
+      this.trophiesSubject.asObservable()
+    ]).pipe(
+      map(([tokens, badges, trophies]) => ({
+        tokens,
+        badges,
+        trophies
+      }))
+    );
   }
+
 }
+
+
+
+

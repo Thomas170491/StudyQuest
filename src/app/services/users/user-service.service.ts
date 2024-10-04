@@ -62,15 +62,25 @@ export class UserService {
   }
 
   // Update an existing user
-  async updateUser(updatedUser: User, id :string): Promise<User[]> {
-    await this._firestoreService.updateData('Users',id, updatedUser)
-    const users = this.usersSubject.value;
-    const index = users.findIndex(s => s.id === id)
-    users[index] = updatedUser;
-    this.usersSubject.next(users)
-    return this.usersSubject.value 
-    
+  async updateUser(updatedUser: User, id: string): Promise<User[]> {
+    try {
+      await this._firestoreService.updateData('Users', id, { ...updatedUser });
+      const users = this.usersSubject.value;
+      const index = users.findIndex(s => s.id === id);
+      if (index !== -1) {
+        users[index] = updatedUser;
+        this.usersSubject.next(users);
+      } else {
+        console.warn(`User with id ${id} not found in local state`);
+      }
+      return users;
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
+    }
   }
+  
+  
   // Delete a user
   async deleteUser(id: string): Promise<void> {
     try {
@@ -86,7 +96,6 @@ export class UserService {
       
       map(users => {
         if(users){
-          console.log('Hello from connected Users')
           return users.filter(user => user.isAuth === true);
           
         }

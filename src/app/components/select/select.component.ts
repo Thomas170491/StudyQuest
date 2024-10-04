@@ -6,6 +6,7 @@ import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
 import {  IonButton, IonButtons, IonContent, IonHeader, IonModal, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { LifetokensComponent } from "../lifetokens/lifetokens.component";
 import { Observable } from 'rxjs';
+import { ChapterService } from '../../services/chapters/chapters.service';
 
 
 const UIElements = [
@@ -37,10 +38,13 @@ export class SelectComponent {
   @ViewChild('modal') modal!: IonModal;
   @ViewChild('subjectModal') subjectModal!: IonModal;
 
-  constructor() {}
+  constructor(
+    private readonly _chapterService : ChapterService
+  ) {}
 
   presentModal(chapterId : string) {
     this.selectedChapterId= chapterId
+    this._chapterService.setCurrentChapterId(chapterId)
     this.modal.present();
   }
 

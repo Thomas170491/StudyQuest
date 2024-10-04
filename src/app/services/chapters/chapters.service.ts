@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
-import { map, tap, switchMap, } from 'rxjs/operators';
+import { map, tap, switchMap, filter, } from 'rxjs/operators';
 import { FirestoreService } from '../firestore/firestore.service'; 
 import { Chapter } from '../../interfaces';
 
@@ -15,6 +15,10 @@ export class ChapterService {
 
   constructor(private firestoreService: FirestoreService) {
     this.loadChapters();
+  }
+
+  setCurrentChapterId(id :string ) : void { 
+    this.currentChapterId.next(id)
   }
 
   // Load chapters from Firestore
@@ -32,10 +36,12 @@ export class ChapterService {
   }
 
   // Get a single chapter by ID
-  getChapterById(id: string): Observable<Chapter | undefined> {
+  getChapterById(id: string): Observable<Chapter> {
+    console.log('getChapterById', id)
     this.currentChapterId.next(id)
     return this.chapterSubject.pipe(
-      map(chapters => chapters.find(chapter => chapter.id === id))
+      map(chapters => chapters.find(chapter => chapter.id === id)),
+      filter((chapter): chapter is Chapter => chapter !== undefined)
     );
   }
 

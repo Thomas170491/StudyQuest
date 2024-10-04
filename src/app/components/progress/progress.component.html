@@ -1,5 +1,5 @@
-
-    <p> {{ progressPercentage$ | async  }}%<p>
-
+<div *ngIf="chapter$ | async as chapter" >
+    <p> {{ progressPercentage$ | async  }}%</p>
+</div>
  
   <!-- Use ionic for styling -->

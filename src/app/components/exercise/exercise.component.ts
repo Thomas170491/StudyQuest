@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonItem, IonLabel, IonList, IonRadio, IonRadioGroup, IonSpinner } from '@ionic/angular/standalone';
 import { ProgressComponent } from '../progress/progress.component';
+import { ChapterService } from '../../services/chapters/chapters.service';
 
 const UIElements = [ 
   IonCard,
@@ -40,15 +41,29 @@ export class ExerciseComponent implements OnInit {
   questions$: Observable<Exercise[]> = of([]);
   answerForms: { [questionId: string]: FormGroup } = {};
   currentQuestion$!: Observable<Exercise |undefined >;
+  currentChapterId$ : Observable<string>
+ 
 
 
   constructor(
     private readonly _exerciseService: ExerciseService,
-    private readonly fb: FormBuilder
-  ) {}
+    private readonly fb: FormBuilder,
+    private readonly _chapterService : ChapterService
+  ) {
+    this.currentChapterId$ = this._chapterService.currentChapterId$;
+  }
+  exercises = {
+    "id" : "1",
+    "question": "Lequel de ces nombres n'est pas un nombre premier?",
+    "options": ["A. 11", "B. 17", "C. 21", "D. 23"],
+    "correctAnswer": "C",
+    "feedback": "21 n'est pas un nombre premier, car il est divisible par 1, 3, 7, et 21.",
+    "subjectId": "VckMwbJvRpp8zvqhbzLh",
+    "level": 1,
+    "type": "multiple_choice"
+  }
 
- ngOnInit() {
-    
+ ngOnInit() {          
     this.currentQuestion$ = this._exerciseService.getExercises().pipe(
       switchMap(exercises => {
         if(exercises.length === 0) {

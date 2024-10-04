@@ -44,7 +44,7 @@ export interface User {
     userId: string;
     chapterId: string;
     subjectId: string;
-    exerciseId: string;
+    exerciseId: string
     completedExercises?: number;
     totalExercises?: number;
     progressPercentage?: number;
