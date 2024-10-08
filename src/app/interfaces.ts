@@ -91,4 +91,11 @@ export interface User {
     endTime: Date;
     completed: boolean;
   }
+  export interface LeaderboardEntry {
+    username: string;
+    badges: number;
+    trophies: number; 
+    tokens: number;
+  }
+  
     

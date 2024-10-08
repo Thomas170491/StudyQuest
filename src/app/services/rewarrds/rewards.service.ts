@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, of } from 'rxjs';
 import { Reward, Progress } from '../../interfaces' 
 
 @Injectable({
@@ -10,51 +10,55 @@ export class RewardService {
 
 
   // BehaviorSubject pour suivre les changements en temps réel
-  private tokensSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  private badgesSubject: BehaviorSubject<Reward[]> = new BehaviorSubject<Reward[]>([]);
-  private trophiesSubject :BehaviorSubject<Reward[]> = new BehaviorSubject<Reward[]>([]);
+  private tokensSubject = new BehaviorSubject<{ [username: string]: number }>({});
+  private badgesSubject = new BehaviorSubject<{ [username: string]: Reward[] }>({});
+  private trophiesSubject = new BehaviorSubject<{ [username: string]: Reward[] }>({});
 
   constructor() {}
 
-  // Méthodes pour gérer les jetons
-  getTokens(): Observable<number> {
-    return this.tokensSubject.asObservable();
+;
+
+  getTokens(username: string): Observable<number> {
+    return of(this.tokensSubject.value[username] || 0);
   }
 
-  addTokens(value: number) {
-    const tokens = this.tokensSubject.value  
-    const updatedTokens= tokens + value;
-    this.tokensSubject.next(updatedTokens)
-    
+  getBadges(username: string): Observable<Reward[]> {
+    return of(this.badgesSubject.value[username] || []);
+  }
+
+  getTrophies(username: string): Observable<Reward[]> {
+    return of(this.trophiesSubject.value[username] || []);
+  }
+
+
+  addTokens(username: string, value: number) {
+    const tokens = this.tokensSubject.value[username] || 0;
+    const updatedTokens = tokens + value;
+    this.tokensSubject.next({ ...this.tokensSubject.value, [username]: updatedTokens });
   }
 
   // Méthodes pour gérer les badges
-  getBadges(): Observable<Reward[]> {
-    return this.badgesSubject.asObservable();
+
+
+  addBadges(username: string, badge: Reward[]) {
+    this.badgesSubject.next({ ...this.badgesSubject.value, [username]: badge });
   }
 
-  addBadges(badge: Reward[]) {
-    this.badgesSubject.next(badge)
-  }
-
-  addBadge(badge: Reward) {
-    const badges = this.badgesSubject.value;
+  addBadge(username: string, badge: Reward) {
+    const badges = this.badgesSubject.value[username] || [];
     badges.push(badge);
-    this.badgesSubject.next(badges);
+    this.badgesSubject.next({ ...this.badgesSubject.value, [username]: badges });
   }
 
-  // Méthodes pour gérer les trophées
-  getTrophies(): Observable<Reward[]> {
-    return this.trophiesSubject.asObservable();
-  }
+  
 
-  addTrophy(trophy: Reward)  {
-    const trophies = this.trophiesSubject.value;
+  addTrophy(username: string, trophy: Reward)  {
+    const trophies = this.trophiesSubject.value[username] || [];
     trophies.push(trophy);
-    this.trophiesSubject.next(trophies);
+    this.trophiesSubject.next({ ...this.trophiesSubject.value, [username]: trophies });
   }
-  addTrophies(trophy : Reward[]){
-    this.trophiesSubject.next(trophy)
+  addTrophies(username: string, trophies: Reward[]) {
+    this.trophiesSubject.next({ ...this.trophiesSubject.value, [username]: trophies });
   }
 
   // Gérer la progression du chapitre
@@ -69,9 +73,9 @@ export class RewardService {
       this.trophiesSubject.asObservable()
     ]).pipe(
       map(([tokens, badges, trophies]) => ({
-        tokens,
-        badges,
-        trophies
+        tokens: Object.values(tokens).reduce((acc, curr) => acc + curr, 0),
+        badges: Object.values(badges).flat(),
+        trophies: Object.values(trophies).flat()
       }))
     );
   }
