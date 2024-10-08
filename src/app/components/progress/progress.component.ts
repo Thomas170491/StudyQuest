@@ -5,14 +5,25 @@ import { Chapter, User } from '../../interfaces';
 import { ChapterService } from '../../services/chapters/chapters.service';
 import { UserService } from '../../services/users/user-service.service';
 import { AsyncPipe, NgIf } from '@angular/common';
+import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonProgressBar } from '@ionic/angular/standalone';
 
+
+
+const UIElements=[
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
+  IonCardTitle,
+  IonProgressBar,
+  
+]
 
 @Component({
   selector: 'app-progress',
   templateUrl: './progress.component.html',
   styleUrls: ['./progress.component.scss'],
   standalone: true,
-  imports: [AsyncPipe, NgIf]
+  imports: [AsyncPipe, NgIf,...UIElements]
 })
 export class ProgressComponent implements OnInit { 
   @Input() userId!: string; 

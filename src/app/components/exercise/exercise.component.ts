@@ -22,10 +22,6 @@ const UIElements = [
   IonButton,
   IonSpinner,
   IonRadioGroup,
-
-
-
-
 ]
 
 @Component({
@@ -52,16 +48,7 @@ export class ExerciseComponent implements OnInit {
   ) {
     this.currentChapterId$ = this._chapterService.currentChapterId$;
   }
-  exercises = {
-    "id" : "1",
-    "question": "Lequel de ces nombres n'est pas un nombre premier?",
-    "options": ["A. 11", "B. 17", "C. 21", "D. 23"],
-    "correctAnswer": "C",
-    "feedback": "21 n'est pas un nombre premier, car il est divisible par 1, 3, 7, et 21.",
-    "subjectId": "VckMwbJvRpp8zvqhbzLh",
-    "level": 1,
-    "type": "multiple_choice"
-  }
+
 
  ngOnInit() {          
     this.currentQuestion$ = this._exerciseService.getExercises().pipe(

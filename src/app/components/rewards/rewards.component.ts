@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { RewardService } from '../../services/rewarrds/rewards.service';
-import { Observable } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { Reward } from '../../interfaces';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { IonContent, IonGrid, IonHeader, IonRow, IonTitle,IonToolbar,IonCol, IonCardContent, IonCard, IonCardHeader, IonTab, IonCardTitle, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
+import { UserService } from '../../services/users/user-service.service';
 
 
 
@@ -35,21 +36,34 @@ const UIElements = [
   templateUrl: './rewards.component.html',
   styleUrl: './rewards.component.scss'
 })
-export class RewardsComponent{
+export class RewardsComponent implements OnInit {
 
-  badges$: Observable<Reward[]>;
-  trophies$: Observable<Reward[]>;
-  tokens$: Observable<number>;
+  badges$!: Observable<Reward[]>;
+  trophies$!: Observable<Reward[]>;
+  tokens$!: Observable<number>;
+  username$!: Observable<string>;
 
   constructor(
     private readonly _rewardService: RewardService,
-  ){
-    this.badges$ = this._rewardService.getBadges();
-    this.trophies$ = this._rewardService.getTrophies();
-    this.tokens$ = this._rewardService.getTokens();
-    
+    private readonly _userService: UserService
+  ) {}
+
+  ngOnInit(): void {
+    this.username$ = this._userService.getCurrentUser().pipe(
+      map(user => user?.username ?? '')
+    );
+
+    this.badges$ = this.username$.pipe(
+      switchMap(username => this._rewardService.getBadges(username))
+    );
+
+    this.trophies$ = this.username$.pipe(
+      switchMap(username => this._rewardService.getTrophies(username))
+    );
+
+    this.tokens$ = this.username$.pipe(
+      switchMap(username => this._rewardService.getTokens(username))
+    );
   }
-
-
-
 }
+

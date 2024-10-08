@@ -4,6 +4,7 @@ import { HomePageComponent } from './components/home/home.component';
 import { SelectComponent } from './components/select/select.component';
 import { AdddataComponent } from './components/adddata/adddata/adddata.component';
 import { RewardsComponent } from './components/rewards/rewards.component';
+import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 
 
 
@@ -14,6 +15,7 @@ export const routes: Routes = [
   { path: 'select', component : SelectComponent},
   {path : 'add', component : AdddataComponent},
   {path : 'rewards', component : RewardsComponent},
+  {path : 'leaderboard', component : LeaderboardComponent},
 
 
 

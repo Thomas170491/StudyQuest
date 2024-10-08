@@ -1,5 +1,11 @@
-<div *ngIf="chapter$ | async as chapter" >
-    <p> {{ progressPercentage$ | async  }}%</p>
-</div>
- 
-  <!-- Use ionic for styling -->
+<ion-card *ngIf="chapter$ | async as chapter">
+  <ion-card-header>
+    <ion-card-title>{{ chapter.title }}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ng-container *ngIf="progressPercentage$ | async as progressPercentage">
+      <ion-progress-bar [value]="progressPercentage / 100"></ion-progress-bar>
+      <p>{{ progressPercentage }}%</p>
+    </ng-container>
+  </ion-card-content>
+</ion-card>
