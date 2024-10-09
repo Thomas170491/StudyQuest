@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RewardService } from '../../services/rewarrds/rewards.service';
-import { map, Observable, switchMap } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { Reward } from '../../interfaces';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { IonContent, IonGrid, IonHeader, IonRow, IonTitle,IonToolbar,IonCol, IonCardContent, IonCard, IonCardHeader, IonTab, IonCardTitle, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
@@ -50,7 +50,20 @@ export class RewardsComponent implements OnInit {
 
   ngOnInit(): void {
     this.username$ = this._userService.getCurrentUser().pipe(
-      map(user => user?.username ?? '')
+      map(user => {
+    
+        if (user) {
+          
+          return user.username; // Ensure the return statement is followed by the value
+        } else {
+          console.error('User is undefined');
+          return ''; // Return an empty string or a default value
+        }
+      }),
+      catchError(error => {
+        console.error('Error fetching user:', error);
+        return of(''); // Return an empty string or a default value
+      })
     );
 
     this.badges$ = this.username$.pipe(

@@ -9,6 +9,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonItem, IonLabel, IonList, IonRadio, IonRadioGroup, IonSpinner } from '@ionic/angular/standalone';
 import { ProgressComponent } from '../progress/progress.component';
 import { ChapterService } from '../../services/chapters/chapters.service';
+import { ProfessorComponent } from "../professor/professor.component";
+import { ProfService } from '../../services/prof/prof.service';
 
 const UIElements = [ 
   IonCard,
@@ -27,7 +29,7 @@ const UIElements = [
 @Component({
   selector: 'app-exercise',
   standalone: true,
-  imports: [FilterbySubjectIdPipe, CommonModule, ReactiveFormsModule,FormsModule, ...UIElements,ProgressComponent],
+  imports: [ProfessorComponent,FilterbySubjectIdPipe, CommonModule, ReactiveFormsModule, FormsModule, ...UIElements, ProgressComponent, ProfessorComponent],
   templateUrl: './exercise.component.html',
   styleUrls: ['./exercise.component.scss']
 })
@@ -38,13 +40,16 @@ export class ExerciseComponent implements OnInit {
   answerForms: { [questionId: string]: FormGroup } = {};
   currentQuestion$!: Observable<Exercise |undefined >;
   currentChapterId$ : Observable<string>
+  professorIsVisible: boolean = true;
+  message: string = '';
  
 
 
   constructor(
     private readonly _exerciseService: ExerciseService,
     private readonly fb: FormBuilder,
-    private readonly _chapterService : ChapterService
+    private readonly _chapterService : ChapterService,
+    private readonly _profService: ProfService
   ) {
     this.currentChapterId$ = this._chapterService.currentChapterId$;
   }
@@ -94,15 +99,32 @@ export class ExerciseComponent implements OnInit {
     
   }
        
-  
- 
-  isFirstQuestion(): boolean {
-    // Implement logic to check if the current question is the first one
-    return false; // Placeholder
+  onProfessorVisibilityChange(isVisible: boolean): void {
+    this.professorIsVisible = isVisible;
+    console.log('Professor visibility changed:', isVisible);
+  }
+  onProfessorMessageChange(message: string): void {
+    this.message = message;
+    console.log('Professor message changed:', message);
+  }
+  onOptionClick(option: string, questionId: string): void {
+    let currentQuestion
+this.questions$.pipe(map(questions => {
+      currentQuestion = questions.find(question => question.id === questionId);
+}))
+
+    if (currentQuestion) {
+      const isCorrect = this._exerciseService.checkAnswer(currentQuestion, option);
+      this.professorIsVisible = true;
+      if (isCorrect) {
+        this.message = this._profService.getMessageIfCorrectAnswer();
+      } else {
+        this.message = this._profService.getMessageIfWrongAnswer();
+      }
+      console.log('Option clicked:', option, 'Question ID:', questionId, 'Is Correct:', isCorrect);
+    } else {
+      console.error('Current question is undefined');
+    }
   }
 
-  isLastQuestion(): boolean {
-    // Implement logic to check if the current question is the last one
-    return false; // Placeholder
-  }
 }

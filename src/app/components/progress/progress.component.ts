@@ -65,7 +65,7 @@ export class ProgressComponent implements OnInit {
       map(user => {
      
         const completedExercises = user?.completedExercises;
-        console.log('Completed Exercises:', completedExercises)
+    
         return Array.isArray(completedExercises) ? completedExercises.length : 0;
       })
     );
@@ -73,9 +73,9 @@ export class ProgressComponent implements OnInit {
 
     this.progressPercentage$ = this.completedExercises$.pipe(
       map(completedExercises => {
-        console.log('Completed Exercises Count:', completedExercises);
+      
         const progress = this.totalExercises > 0 ? (completedExercises / this.totalExercises) * 100 : 0;
-        console.log('Progress Percentage:', progress);
+       
         return progress;
       }),
       tap(console.log)

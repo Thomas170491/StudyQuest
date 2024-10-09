@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { BehaviorSubject, firstValueFrom, from, Observable, of } from 'rxjs';
 import { map, tap, switchMap} from 'rxjs/operators';
 import { Exercise } from '../../interfaces';
@@ -6,6 +6,7 @@ import { FirestoreService } from '../firestore/firestore.service';
 import { LifetokenserviceService } from '../lifetokenservice/lifetokenservice.service';
 import { UserService } from '../users/user-service.service';
 import { ChapterService } from '../chapters/chapters.service';
+import { RewardService } from '../rewarrds/rewards.service'; 
 @Injectable({
   providedIn: 'root'
 })
@@ -17,12 +18,12 @@ export class ExerciseService {
   currentExercise$ = this.currentLevel$.pipe(
     switchMap(level => this.exerciseSubject.pipe(
       map(exercises => exercises.filter(exercise => exercise.level === level)),
+      tap(exercises => console.log('Exercises:', exercises)),
       map(exercises => exercises.filter(async (e)=> {
         const user = await firstValueFrom(this._userService.getCurrentUser())
         if(!user){
           throw new Error('User not found')
         }
-        console.log('Exercies :', exercises)
         return user.completedExercises?.find(ce => {
           ce.exerciseId !== e.id 
         })
@@ -37,7 +38,8 @@ export class ExerciseService {
     private firestoreService: FirestoreService,
     private readonly lifetokenserviceService: LifetokenserviceService,
     private readonly _userService : UserService,
-    private readonly _chapterService : ChapterService
+    private readonly _chapterService : ChapterService,
+    @Inject(RewardService) private readonly _rewardService : RewardService
 
   ) {
     this.loadExercises();
@@ -187,6 +189,8 @@ goToPreviousExercise(): void {
   private async handleCorrectAnswer(exercise: Exercise): Promise<void>  {
     console.log('Correct answer!');
     alert('Bravo! Ta réponse est juste!' + exercise.feedback);
+
+
     await this.goToNextExercise();
   }
   
@@ -230,6 +234,12 @@ goToPreviousExercise(): void {
           })
           currentUser.completedExercises = completedExercises
           this._userService.updateUser(currentUser, currentUser.id)
+        
+          if(completedExercises.length%4 === 0){
+            
+            this.proceedToNextLevel();
+          }
+            this._rewardService.addTokens(currentUser.username,10)
         } else {
            this.handleIncorrectAnswer();
         }

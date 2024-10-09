@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, lastValueFrom, map, Observable, of } from 'rxjs';
 import { Reward, Progress } from '../../interfaces' 
+import { UserService } from '../users/user-service.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,9 @@ export class RewardService {
   private badgesSubject = new BehaviorSubject<{ [username: string]: Reward[] }>({});
   private trophiesSubject = new BehaviorSubject<{ [username: string]: Reward[] }>({});
 
-  constructor() {}
+  constructor(
+    private readonly _userService: UserService,
+  ) {}
 
 ;
 
@@ -31,35 +34,50 @@ export class RewardService {
   }
 
 
-  addTokens(username: string, value: number) {
+   addTokens(username: string, value: number) {
     const tokens = this.tokensSubject.value[username] || 0;
-    const updatedTokens = tokens + value;
-    this.tokensSubject.next({ ...this.tokensSubject.value, [username]: updatedTokens });
+    const userObservable = this._userService.getCurrentUser().pipe(
+      map(userData => {
+        console.log('User Data in add Tokens:', userData);
+        if (userData) {
+          const updatedTokens = tokens + value;
+          this.tokensSubject.next({ ...this.tokensSubject.value, [tokens]: updatedTokens });
+          const updatedUserData = { ...userData, tokens: updatedTokens };
+          this._userService.updateUser(updatedUserData, userData.id);
+        }
+      })
+    );
+  
+
   }
 
   // Méthodes pour gérer les badges
 
 
-  addBadges(username: string, badge: Reward[]) {
-    this.badgesSubject.next({ ...this.badgesSubject.value, [username]: badge });
+  addBadges(username: string, badge: Reward) {
+    this.badgesSubject.next({ ...this.badgesSubject.value, [username]: [badge] });
+    this._userService.getCurrentUser().pipe(map(userData => {
+      if (userData) {
+        const updatedBadges = [badge];
+        const updatedUserData = { ...userData, badges: updatedBadges };
+        this._userService.updateUser(updatedUserData, userData.id);
+      }
+    }))
+
   }
-
-  addBadge(username: string, badge: Reward) {
-    const badges = this.badgesSubject.value[username] || [];
-    badges.push(badge);
-    this.badgesSubject.next({ ...this.badgesSubject.value, [username]: badges });
-  }
-
-  
-
   addTrophy(username: string, trophy: Reward)  {
     const trophies = this.trophiesSubject.value[username] || [];
     trophies.push(trophy);
     this.trophiesSubject.next({ ...this.trophiesSubject.value, [username]: trophies });
+    this._userService.getCurrentUser().pipe(map(userData => {
+      if (userData) {
+        const updatedTrophies = trophies;
+        const updatedUserData = { ...userData, trophies: updatedTrophies };
+        this._userService.updateUser(updatedUserData, userData.id);
+      }
+    }));
   }
-  addTrophies(username: string, trophies: Reward[]) {
-    this.trophiesSubject.next({ ...this.trophiesSubject.value, [username]: trophies });
-  }
+
 
   // Gérer la progression du chapitre
   getProgress(chapterId: string): Progress | undefined {

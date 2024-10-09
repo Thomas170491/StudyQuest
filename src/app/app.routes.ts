@@ -5,6 +5,7 @@ import { SelectComponent } from './components/select/select.component';
 import { AdddataComponent } from './components/adddata/adddata/adddata.component';
 import { RewardsComponent } from './components/rewards/rewards.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 
 
@@ -16,7 +17,7 @@ export const routes: Routes = [
   {path : 'add', component : AdddataComponent},
   {path : 'rewards', component : RewardsComponent},
   {path : 'leaderboard', component : LeaderboardComponent},
-
+  {path : 'profile', component : ProfileComponent},
 
 
 

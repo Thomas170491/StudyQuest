@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Exercise, Subject } from '../../interfaces';
+import {  Subject } from '../../interfaces';
 import { SubjectListService } from '../../services/subject-list/subject-list.service';
 import { AsyncPipe, JsonPipe, NgFor, NgIf } from '@angular/common';
 import { ChapterListComponent } from '../chapter-list/chapter-list.component';;
@@ -41,6 +41,7 @@ export class SubjectListComponent {
     private router: Router
   ) {
     this.subjects$ = this._service.getSubjects(); 
+    console.log("Subjects :", this.subjects$);
 
   }
   @Input() chapterId!: string;

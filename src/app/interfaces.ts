@@ -7,6 +7,9 @@ export interface User {
     group: string; 
     isAuth: boolean;
     completedExercises: Progress[];
+    badges?: Reward[];
+    trophies?: Reward[];
+    tokens?: number;
   }
 
   export interface Chapter {

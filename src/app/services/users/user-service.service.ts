@@ -43,7 +43,7 @@ export class UserService {
   async addUser(user: User): Promise<void> {
     try{
       const currentUser = this._auth.currentUser
-      console.log(currentUser)
+    
       if (currentUser) {
         const fbDoc = doc(this._firestore,`Users/${currentUser.uid}`)
         await setDoc(fbDoc, {...user}).catch(err => console.error('Error adding User to database:', err));

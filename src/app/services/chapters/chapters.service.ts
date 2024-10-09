@@ -37,7 +37,7 @@ export class ChapterService {
 
   // Get a single chapter by ID
   getChapterById(id: string): Observable<Chapter> {
-    console.log('getChapterById', id)
+   
     this.currentChapterId.next(id)
     return this.chapterSubject.pipe(
       map(chapters => chapters.find(chapter => chapter.id === id)),

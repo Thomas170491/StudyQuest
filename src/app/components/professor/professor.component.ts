@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA,  OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA,  EventEmitter,  Input,  OnInit, Output } from '@angular/core';
 import { ProfService } from '../../services/prof/prof.service';
 import { IonAvatar, IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonFooter, IonIcon, IonItem, IonLabel, IonList, IonRadio, IonRadioGroup, IonSpinner } from '@ionic/angular/standalone';
 import '@lottiefiles/lottie-player';
@@ -29,11 +29,11 @@ const UIElements = [
 })
 export class ProfessorComponent implements OnInit {
 
-  isVisible : boolean  = true;
-  message! : string ;
-  currentLevel : number = 0; 
- 
-
+  @Input() isVisible : boolean  = true; 
+  currentLevel : number; 
+  @Input() message: string =''; 
+  @Output() isVisibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() messageChange = new EventEmitter<string>(); 
 
 
   constructor(
@@ -49,10 +49,13 @@ export class ProfessorComponent implements OnInit {
     showWelcomeMessage(): void {
       this.isVisible = true;
       this.message = 'Bienvenue au niveau ' + this.currentLevel;
+      this.isVisibleChange.emit(this.isVisible); 
+      this.messageChange.emit(this.message);
     }
   
     hideProfessor(): void {
-      this.isVisible = false;
+    this.isVisibleChange.emit(this.isVisible);
+    this.isVisible = false;
     }
   
     showFeedback(isCorrect: boolean): void {
@@ -62,5 +65,7 @@ export class ProfessorComponent implements OnInit {
       } else {
         this.message = this._profService.getMessageIfWrongAnswer();
       }
+      this.isVisibleChange.emit(this.isVisible); 
+      this.messageChange.emit(this.message);
     }
   }

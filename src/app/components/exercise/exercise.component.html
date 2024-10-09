@@ -22,7 +22,7 @@
               <ion-list>
                 <ion-radio-group formControlName="selectedOption">
                   <ion-item *ngFor="let option of currentQuestion.options">
-                    <ion-label>{{ option }}</ion-label>
+                    <ion-label (click)="onOptionClick(option, currentQuestion.id)">{{ option }}</ion-label>
                     <ion-radio slot="start" [value]="option"></ion-radio>
                   </ion-item>
                 </ion-radio-group>
@@ -40,7 +40,7 @@
 
           <!-- Buttons for navigation and submission -->
           <div class="navigation-buttons">
-            <ion-button (click)="onPrevious()" [disabled]="isFirstQuestion()">Previous</ion-button>
+  
             <ion-button (click)="submitAnswer(currentQuestion.id)">Submit</ion-button>
          
 
@@ -49,6 +49,13 @@
         </form>
       </ion-card-content>
     </ion-card>
+    <app-professor
+[isVisible]="professorIsVisible"
+[message]="message"
+(isVisibleChange)="onProfessorVisibilityChange($event)"
+(messageChange)="onProfessorMessageChange($event)"
+>
+</app-professor>
   </div>
 
   <ng-template #loading>

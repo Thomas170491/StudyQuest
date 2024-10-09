@@ -24,7 +24,7 @@ export class AuthService {
       const provider = new GoogleAuthProvider();
       const credential = await signInWithPopup(this._auth, provider);
       const user = credential.user;
-      console.log(user);
+      
       
       if(user){
         const userDocRef = doc(this._firestore,'Users', user.uid);
@@ -48,7 +48,7 @@ export class AuthService {
           
         } else {
           const existingUserData = userDoc.data() as User; 
-          console.log(existingUserData);
+         
           completedExercises = existingUserData.completedExercises ?? [];
           
           await this._userService.updateUser({ ...existingUserData, isAuth: true, completedExercises : completedExercises }, existingUserData.id);

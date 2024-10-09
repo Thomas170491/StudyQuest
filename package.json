@@ -1,7 +1,6 @@
 {
   "name": "study-quest",
   "version": "0.0.0",
-
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -23,6 +22,7 @@
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
     "@capacitor/angular": "^2.0.3",
+    "@capacitor/camera": "^6.0.2",
     "@capacitor/cli": "^6.1.2",
     "@capacitor/core": "^6.1.2",
     "@ionic/angular": "^8.3.0",
