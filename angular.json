@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/study-quest/browser",
+            "outputPath": "dist/study-quest/browser/browser",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
