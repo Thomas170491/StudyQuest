@@ -42,8 +42,6 @@ testem.log
 Thumbs.db
 
 angular.json
-ionic.config.json
-/src/theme
 package-lock.json
 package.json
 
