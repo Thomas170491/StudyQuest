@@ -1,16 +1,10 @@
 {
   "hosting": {
-    "public": "dist/study-quest/browser/browser",
+    "public": "dist/study-quest/browser/browser/browser",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
     ]
   }
 }
