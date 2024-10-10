@@ -5,6 +5,8 @@
 /tmp
 /out-tsc
 /bazel-out
+.firebase
+.github/
 
 # Node
 /node_modules

@@ -3,7 +3,9 @@ import { AsyncPipe, NgFor } from '@angular/common';
 import { LeaderboardService } from '../../services/leaderboard/leaderboard.service';
 import { Observable } from 'rxjs';
 import { LeaderboardEntry } from '../../interfaces';
-import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonContent, IonGrid, IonHeader, IonRow, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonContent, IonGrid, IonHeader, IonRow, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
+;
 
 
 const UIElements = [
@@ -18,6 +20,8 @@ const UIElements = [
   IonCardHeader,
   IonCardTitle,
   IonCardContent,
+  IonButton
+
   ]
 @Component({
   selector: 'app-leaderboard',
@@ -29,9 +33,17 @@ const UIElements = [
 export class LeaderboardComponent implements OnInit {
   leaderboard$!: Observable<LeaderboardEntry[]>;
 
-  constructor(private leaderboardService: LeaderboardService) {}
+  constructor(
+    private leaderboardService: LeaderboardService,
+    private router : Router
+    
+  ) {}
 
   ngOnInit(): void {
     this.leaderboard$ = this.leaderboardService.getLeaderboard();
   }
+  goBack(){
+    this.router.navigate(['/profile']);
+  }
 }
+

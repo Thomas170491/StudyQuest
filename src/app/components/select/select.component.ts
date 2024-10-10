@@ -7,6 +7,7 @@ import {  IonButton, IonButtons, IonContent, IonHeader, IonModal, IonTitle, IonT
 import { LifetokensComponent } from "../lifetokens/lifetokens.component";
 import { Observable } from 'rxjs';
 import { ChapterService } from '../../services/chapters/chapters.service';
+import { Router } from '@angular/router';
 
 
 const UIElements = [
@@ -39,7 +40,10 @@ export class SelectComponent {
   @ViewChild('subjectModal') subjectModal!: IonModal;
 
   constructor(
-    private readonly _chapterService : ChapterService
+    private readonly _chapterService : ChapterService,
+    private readonly router : Router, 
+      
+    
   ) {}
 
   presentModal(chapterId : string) {
@@ -58,5 +62,9 @@ export class SelectComponent {
   }
   closeSubjectModal() {
     this.subjectModal.dismiss();
+  }  
+  goBack(){
+    this.router.navigate(['/profile']);
   }
+
 }
