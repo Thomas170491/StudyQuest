@@ -4,9 +4,10 @@ import { Observable } from 'rxjs';
 import { User } from '../../interfaces';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { RewardsComponent } from '../rewards/rewards.component';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {  IonContent, IonHeader, IonList, IonToolbar,IonMenu, IonTitle, IonItem, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonSpinner, IonAvatar, IonButton, IonMenuButton, IonButtons } from '@ionic/angular/standalone';
 import { ProfileService } from '../../services/profile/profile.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 
 const UIElements = [
@@ -39,15 +40,27 @@ export class ProfileComponent {
 
   constructor(
     private _userService: UserService,
-    private _profileService: ProfileService
+    private _profileService: ProfileService,
+    private router: Router,
+    private readonly authService : AuthService
   ) { 
-    this.user$ = this._userService.getCurrentUser()
+    this.user$ = this._userService.getCurrentUser();
+    this.router = new Router();
+
   }
   async changeProfilePicture(user: User): Promise<void> {
-    await this._profileService.changeProfilePicture(user);
+    await this._profileService.changeProfilePicture(user); 
   }
+ goToGame() {
+  this.router.navigate(['/select']);
+ }
+ goToLeaderboard() {
+  this.router.navigate(['/leaderboard']);
+ }
+ signOut() {
+   this.authService.signOut();
+ }
 }
-
-
+ 
 
 

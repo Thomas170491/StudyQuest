@@ -36,7 +36,10 @@
           <p>Email: {{ user.email }}</p>
           <p>Username: {{ user.username }}</p>
           <!-- Add more user details as needed -->
-          <ion-button (click)="changeProfilePicture(user)">Change Profile Picture</ion-button>
+          <ion-button (click)="changeProfilePicture(user)">Changer la photo de profile</ion-button>
+          <ion-button (click)="goToGame()">Commencer le jeu</ion-button>
+          <ion-button (click)="goToLeaderboard()">Aller au podium</ion-button>
+          <ion-button (click) = "signOut()">Sé déconnecter</ion-button>
         </ion-card-content>
       </ion-card>
     </div>
@@ -44,7 +47,7 @@
  
     <ion-card>
         <ion-card-header>
-          <ion-card-title>Rewards</ion-card-title>
+          <ion-card-title>Récompenses</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <app-rewards>

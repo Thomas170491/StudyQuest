@@ -57,30 +57,30 @@ export class ExerciseComponent implements OnInit {
 
 
  ngOnInit() {   
-    
-    this.currentQuestion$ = this._exerciseService.currentExercise$.pipe(
-      map(currentQuestion => {
-        console.log('Exercises:', currentQuestion);
-        if(!currentQuestion) {
-          const q =  this._exerciseService.getCurrentExercise(this.subjectId)  
-       
-          return undefined;
+  
+  this.currentQuestion$ = this._exerciseService.currentExercise$.pipe(
+    map(currentQuestion => {
+      console.log('Current question entering map:', currentQuestion);
+      if (!currentQuestion) {
+        const q = this._exerciseService.getCurrentExercise(this.subjectId);
+        console.log('Current Question in if statement:', q);
+        return q as Exercise | undefined;
+      }
+      // Initialize form based on the current question type
+      if (!this.answerForms[currentQuestion.id]) {
+        if (currentQuestion.type === 'multiple_choice') {
+          this.answerForms[currentQuestion.id] = this.fb.group({
+            selectedOption: ['']
+          });
+        } else {
+          this.answerForms[currentQuestion.id] = this.fb.group({
+            answer: ['']
+          });
         }
-              // Initialize form based on the current question type
-              if (currentQuestion.type === 'multiple_choice') {
-                
-                this.answerForms[currentQuestion.id] = this.fb.group({
-                  selectedOption: ['']
-                });
-              } else {
-                this.answerForms[currentQuestion.id] = this.fb.group({
-                  answer: ['']
-                });
-              }
-            console.log('Current Question:', currentQuestion)
-            return currentQuestion;
-          })
-        );
+      }
+      console.log('Current Question:', currentQuestion);
+      return currentQuestion;
+    }))
   }
 
 

@@ -33,14 +33,14 @@ export class ExerciseService {
   //     map(shuffledExercises => shuffledExercises[this.currentIndex$.value]) // Select the first exercise from the shuffled array
   //   ))
   // );
-  currentExercise$ : Observable<Exercise>; 
+  currentExercise$ : Observable<Exercise|undefined>; 
 
   constructor(
     private firestoreService: FirestoreService,
     private readonly lifetokenserviceService: LifetokenserviceService,
     private readonly _userService : UserService,
     private readonly _chapterService : ChapterService,
-    @Inject(RewardService) private readonly _rewardService : RewardService
+    
 
   ) {
     this.loadExercises();
@@ -54,33 +54,41 @@ export class ExerciseService {
     
         if (!user || !exercises || !level) {
           console.log('Missing data:', { user, exercises, level });
-         
+  
           return [];
         }
     
         const currentExercises = exercises.filter(exercise => exercise.level === level);
         console.log('Current Exercises:', currentExercises);
-        if (currentExercises.length === 0) {
-          console.log('No exercises found for level:', level);
-          level = level + 1;
-          return exercises.filter(exercise => exercise.level === level);
-        }
-    
+        
         if (!user.completedExercises) {
           console.log('User has no completed exercises.');
           return currentExercises;
         }
-    
+        
         const filteredExercises = currentExercises.filter(e => {
           const isCompleted = user.completedExercises.some(ce => ce.exerciseId === e.id);
           console.log(`Exercise ${e.id} completed:`, isCompleted);
           return !isCompleted;
         });
-    
+        
+        if (filteredExercises.length === 0) {
+          console.log('No exercises found for level:', level);
+          let level2 = level + 1;
+          
+          return exercises.filter(exercise => exercise.level === level2);
+
+          return [];
+        }
         console.log('Filtered Exercises:', filteredExercises);
         return filteredExercises;
       }),
-      map(shuffledExercises => shuffledExercises[this.currentIndex$.value])
+      map(shuffledExercises => {
+        if (Array.isArray(shuffledExercises) && shuffledExercises.length > 0) {
+          return shuffledExercises[this.currentIndex$.value];
+        }
+        return undefined;
+      })
     );
   }
 
@@ -275,7 +283,7 @@ goToPreviousExercise(): void {
           this._userService.updateUser(currentUser, currentUser.id)
         
     
-            this._rewardService.addTokens(currentUser.username,10)
+       
         } else {
            this.handleIncorrectAnswer();
         }
@@ -286,9 +294,10 @@ goToPreviousExercise(): void {
   getExerciseFeedback(): string {
     let feedback = '';
     this.currentExercise$.pipe(map(exercise => {
-      feedback = exercise.feedback;
-    }
-    ));
+      if (exercise) {
+        feedback = exercise.feedback;
+      }
+    }));
      return feedback;   
     }
   
