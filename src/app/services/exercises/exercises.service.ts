@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom, from, Observable, of } from 'rxjs';
 import { map, tap, switchMap} from 'rxjs/operators';
 import { Exercise } from '../../interfaces';
 import { FirestoreService } from '../firestore/firestore.service'; 
@@ -15,24 +15,25 @@ export class ExerciseService {
   private exerciseSubject: BehaviorSubject<Exercise[]> = new BehaviorSubject<Exercise[]>([]);
   private currentLevel$ = new BehaviorSubject<number>(1);
   private currentIndex$ = new BehaviorSubject<number>(0);
-  currentExercise$ = this.currentLevel$.pipe(
-    switchMap(level => this.exerciseSubject.pipe(
-      map(exercises => exercises.filter(exercise => exercise.level === level)),
-      tap(exercises => console.log('Exercises:', exercises)),
-      map(exercises => exercises.filter(async (e)=> {
-        const user = await firstValueFrom(this._userService.getCurrentUser())
-        if(!user){
-          throw new Error('User not found')
-        }
-        return user.completedExercises?.find(ce => {
-          ce.exerciseId !== e.id 
-        })
-      }
-      )),
-      map(filteredExercises => this.shuffleArray(filteredExercises)),
-      map(shuffledExercises => shuffledExercises[this.currentIndex$.value]) // Select the first exercise from the shuffled array
-    ))
-  );
+  // currentExercise$ = this.currentLevel$.pipe(
+  //   switchMap(level => this.exerciseSubject.pipe(
+  //     map(exercises => exercises.filter(exercise => exercise.level === level)),
+  //     tap(exercises => console.log('Exercises:', exercises)),
+  //     map(exercises => exercises.filter(async (e)=> {
+  //       const user = await firstValueFrom(this._userService.getCurrentUser())
+  //       if(!user){
+  //         throw new Error('User not found')
+  //       }
+  //       return user.completedExercises?.find(ce => {
+  //         ce.exerciseId !== e.id 
+  //       })
+  //     }
+  //     )),
+  //     map(filteredExercises => this.shuffleArray(filteredExercises)),
+  //     map(shuffledExercises => shuffledExercises[this.currentIndex$.value]) // Select the first exercise from the shuffled array
+  //   ))
+  // );
+  currentExercise$; 
 
   constructor(
     private firestoreService: FirestoreService,
@@ -43,6 +44,28 @@ export class ExerciseService {
 
   ) {
     this.loadExercises();
+this.currentExercise$ = combineLatest([
+  this.currentLevel$.asObservable(),
+  this.exerciseSubject.asObservable(),
+  this._userService.getCurrentUser()
+]).pipe(
+  map(([level, exercises, user]) => {
+    console.log('Data:', user, exercises, level);
+    if (!user || !exercises || !level) {
+      return [];
+    }
+    const currentExercises = exercises.filter(exercise => exercise.level === level);
+    if (!user.completedExercises) {
+      return exercises;
+    }
+    return currentExercises.filter(e => {
+      return !user.completedExercises?.some(ce => ce.exerciseId === e.id);
+    });
+  }),
+  map(exercises => this.shuffleArray(exercises)),
+  map(shuffledExercises => shuffledExercises[this.currentIndex$.value])
+);
+ 
   }
 
   // Load exercises from Firestore
@@ -106,15 +129,14 @@ export class ExerciseService {
       }) 
     );
  }
- getCurrentExercise(subjectId: string): Observable<Exercise | undefined> {
+ getCurrentExercise(subjectId: string):void{
   const filteredExercise = this.exerciseSubject.value.findIndex(exercise => exercise.subjectId === subjectId);
   console.log('Filtered Exercises:', filteredExercise);
   if (filteredExercise <= -1) {
-    console.error('No exercises found for the given subjectId and level.');
-    throw new Error('No exercises found for the given subjectId and level.');
+   return;
   }
   this.currentIndex$.next(filteredExercise);
-  return this.currentExercise$;
+
 }
 
   // Delete an exercise
@@ -146,6 +168,7 @@ export class ExerciseService {
 
   // Shuffle an array
   private shuffleArray(array: Exercise[]): Exercise[] {
+    console.log('Shuffling array:', array);
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
@@ -235,10 +258,7 @@ goToPreviousExercise(): void {
           currentUser.completedExercises = completedExercises
           this._userService.updateUser(currentUser, currentUser.id)
         
-          if(completedExercises.length%4 === 0){
-            
-            this.proceedToNextLevel();
-          }
+    
             this._rewardService.addTokens(currentUser.username,10)
         } else {
            this.handleIncorrectAnswer();

@@ -54,7 +54,7 @@ export class AuthService {
           await this._userService.updateUser({ ...existingUserData, isAuth: true, completedExercises : completedExercises }, existingUserData.id);
           
         }
-        this.router.navigate(['/select']);
+        this.router.navigate(['/profile']);
       }else{
       this.router.navigate(['/home']);
     }

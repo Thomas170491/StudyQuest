@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { ExerciseService } from '../../services/exercises/exercises.service';
 import { firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import { Exercise } from '../../interfaces';
@@ -49,21 +49,22 @@ export class ExerciseComponent implements OnInit {
     private readonly _exerciseService: ExerciseService,
     private readonly fb: FormBuilder,
     private readonly _chapterService : ChapterService,
-    private readonly _profService: ProfService
+    private readonly _profService: ProfService,
+    private readonly _cdr : ChangeDetectorRef
   ) {
     this.currentChapterId$ = this._chapterService.currentChapterId$;
   }
 
 
- ngOnInit() {          
-    this.currentQuestion$ = this._exerciseService.getExercises().pipe(
-      switchMap(exercises => {
-        if(exercises.length === 0) {
-          return [];
+ ngOnInit() {   
+    
+    this.currentQuestion$ = this._exerciseService.currentExercise$.pipe(
+      map(currentQuestion => {
+        console.log('Exercises:', currentQuestion);
+        if(!currentQuestion) {
+          this._exerciseService.getCurrentExercise(this.subjectId)  
+          return undefined;
         }
-       return this._exerciseService.getCurrentExercise(this.subjectId).pipe(
-          map(currentQuestion => {
-            if (currentQuestion) {
               // Initialize form based on the current question type
               if (currentQuestion.type === 'multiple_choice') {
                 this.answerForms[currentQuestion.id] = this.fb.group({
@@ -74,13 +75,10 @@ export class ExerciseComponent implements OnInit {
                   answer: ['']
                 });
               }
-            }
+            
             return currentQuestion;
           })
         );
-        
-      })
-    )
   }
 
 
@@ -101,30 +99,36 @@ export class ExerciseComponent implements OnInit {
        
   onProfessorVisibilityChange(isVisible: boolean): void {
     this.professorIsVisible = isVisible;
-    console.log('Professor visibility changed:', isVisible);
+    console.log('Professor visibility changed:', isVisible);4
+    this._cdr.detectChanges();
   }
   onProfessorMessageChange(message: string): void {
     this.message = message;
     console.log('Professor message changed:', message);
+    this._cdr.detectChanges();
   }
-  onOptionClick(option: string, questionId: string): void {
-    let currentQuestion
-this.questions$.pipe(map(questions => {
-      currentQuestion = questions.find(question => question.id === questionId);
-}))
-
-    if (currentQuestion) {
-      const isCorrect = this._exerciseService.checkAnswer(currentQuestion, option);
-      this.professorIsVisible = true;
-      if (isCorrect) {
-        this.message = this._profService.getMessageIfCorrectAnswer();
+  async onOptionClick(option: string, questionId: string): Promise<void> {
+    try {
+      const questions = await firstValueFrom(this.questions$);
+      const currentQuestion = questions.find(question => question.id === questionId);
+  
+      if (currentQuestion) {
+        const isCorrect = this._exerciseService.checkAnswer(currentQuestion, option);
+        this.professorIsVisible = true;
+        if (isCorrect) {
+          this.message = this._profService.getMessageIfCorrectAnswer();
+        } else {
+          this.message = this._profService.getMessageIfWrongAnswer();
+        }
+        console.log('Option clicked:', option, 'Question ID:', questionId, 'Is Correct:', isCorrect);
+        this._cdr.detectChanges(); // Manually trigger change detection
       } else {
-        this.message = this._profService.getMessageIfWrongAnswer();
+        console.error('Current question is undefined');
       }
-      console.log('Option clicked:', option, 'Question ID:', questionId, 'Is Correct:', isCorrect);
-    } else {
-      console.error('Current question is undefined');
+    } catch (error) {
+      console.error('Error in onOptionClick:', error);
     }
   }
+
 
 }
