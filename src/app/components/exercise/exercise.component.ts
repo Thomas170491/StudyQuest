@@ -62,11 +62,13 @@ export class ExerciseComponent implements OnInit {
       map(currentQuestion => {
         console.log('Exercises:', currentQuestion);
         if(!currentQuestion) {
-          this._exerciseService.getCurrentExercise(this.subjectId)  
+          const q =  this._exerciseService.getCurrentExercise(this.subjectId)  
+       
           return undefined;
         }
               // Initialize form based on the current question type
               if (currentQuestion.type === 'multiple_choice') {
+                
                 this.answerForms[currentQuestion.id] = this.fb.group({
                   selectedOption: ['']
                 });
@@ -75,7 +77,7 @@ export class ExerciseComponent implements OnInit {
                   answer: ['']
                 });
               }
-            
+            console.log('Current Question:', currentQuestion)
             return currentQuestion;
           })
         );

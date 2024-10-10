@@ -22,7 +22,7 @@
               <ion-list>
                 <ion-radio-group formControlName="selectedOption">
                   <ion-item *ngFor="let option of currentQuestion.options">
-                    <ion-label (click)="onOptionClick(option, currentQuestion.id)">{{ option }}</ion-label>
+                    <ion-label>{{ option }}</ion-label>
                     <ion-radio slot="start" [value]="option"></ion-radio>
                   </ion-item>
                 </ion-radio-group>
@@ -49,13 +49,7 @@
         </form>
       </ion-card-content>
     </ion-card>
-    <app-professor
-[isVisible]="professorIsVisible"
-[message]="message"
-(isVisibleChange)="onProfessorVisibilityChange($event)"
-(messageChange)="onProfessorMessageChange($event)"
->
-</app-professor>
+  
   </div>
 
   <ng-template #loading>

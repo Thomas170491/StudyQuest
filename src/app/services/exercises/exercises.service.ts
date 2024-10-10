@@ -33,7 +33,7 @@ export class ExerciseService {
   //     map(shuffledExercises => shuffledExercises[this.currentIndex$.value]) // Select the first exercise from the shuffled array
   //   ))
   // );
-  currentExercise$; 
+  currentExercise$ : Observable<Exercise>; 
 
   constructor(
     private firestoreService: FirestoreService,
@@ -44,28 +44,44 @@ export class ExerciseService {
 
   ) {
     this.loadExercises();
-this.currentExercise$ = combineLatest([
-  this.currentLevel$.asObservable(),
-  this.exerciseSubject.asObservable(),
-  this._userService.getCurrentUser()
-]).pipe(
-  map(([level, exercises, user]) => {
-    console.log('Data:', user, exercises, level);
-    if (!user || !exercises || !level) {
-      return [];
-    }
-    const currentExercises = exercises.filter(exercise => exercise.level === level);
-    if (!user.completedExercises) {
-      return exercises;
-    }
-    return currentExercises.filter(e => {
-      return !user.completedExercises?.some(ce => ce.exerciseId === e.id);
-    });
-  }),
-  map(exercises => this.shuffleArray(exercises)),
-  map(shuffledExercises => shuffledExercises[this.currentIndex$.value])
-);
- 
+    this.currentExercise$  = combineLatest([
+      this.currentLevel$.asObservable(),
+      this.exerciseSubject.asObservable(),
+      this._userService.getCurrentUser()
+    ]).pipe(
+      map(([level, exercises, user]) => {
+        console.log('Data:', { user, exercises, level });
+    
+        if (!user || !exercises || !level) {
+          console.log('Missing data:', { user, exercises, level });
+         
+          return [];
+        }
+    
+        const currentExercises = exercises.filter(exercise => exercise.level === level);
+        console.log('Current Exercises:', currentExercises);
+        if (currentExercises.length === 0) {
+          console.log('No exercises found for level:', level);
+          level = level + 1;
+          return exercises.filter(exercise => exercise.level === level);
+        }
+    
+        if (!user.completedExercises) {
+          console.log('User has no completed exercises.');
+          return currentExercises;
+        }
+    
+        const filteredExercises = currentExercises.filter(e => {
+          const isCompleted = user.completedExercises.some(ce => ce.exerciseId === e.id);
+          console.log(`Exercise ${e.id} completed:`, isCompleted);
+          return !isCompleted;
+        });
+    
+        console.log('Filtered Exercises:', filteredExercises);
+        return filteredExercises;
+      }),
+      map(shuffledExercises => shuffledExercises[this.currentIndex$.value])
+    );
   }
 
   // Load exercises from Firestore
