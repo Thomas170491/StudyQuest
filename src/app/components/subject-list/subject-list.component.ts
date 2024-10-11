@@ -41,7 +41,7 @@ export class SubjectListComponent {
     private router: Router
   ) {
     this.subjects$ = this._service.getSubjects(); 
-    console.log("Subjects :", this.subjects$);
+
 
   }
   @Input() chapterId!: string;

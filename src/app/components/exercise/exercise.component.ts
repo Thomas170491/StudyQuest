@@ -60,10 +60,8 @@ export class ExerciseComponent implements OnInit {
   
   this.currentQuestion$ = this._exerciseService.currentExercise$.pipe(
     map(currentQuestion => {
-      console.log('Current question entering map:', currentQuestion);
       if (!currentQuestion) {
         const q = this._exerciseService.getCurrentExercise(this.subjectId);
-        console.log('Current Question in if statement:', q);
         return q as Exercise | undefined;
       }
       // Initialize form based on the current question type
@@ -78,7 +76,7 @@ export class ExerciseComponent implements OnInit {
           });
         }
       }
-      console.log('Current Question:', currentQuestion);
+
       return currentQuestion;
     }))
   }
@@ -94,19 +92,19 @@ export class ExerciseComponent implements OnInit {
 
     const answer = form.get('selectedOption')?.value || form.get('answer')?.value;
     const extractedAnswer = answer.split('.')[0].trim();
-    console.log(`Answer for question ${questionId}: ${extractedAnswer}`);
+
     await firstValueFrom(this._exerciseService.saveAnswer(questionId, extractedAnswer));
     
   }
        
   onProfessorVisibilityChange(isVisible: boolean): void {
     this.professorIsVisible = isVisible;
-    console.log('Professor visibility changed:', isVisible);4
+
     this._cdr.detectChanges();
   }
   onProfessorMessageChange(message: string): void {
     this.message = message;
-    console.log('Professor message changed:', message);
+
     this._cdr.detectChanges();
   }
   async onOptionClick(option: string, questionId: string): Promise<void> {
@@ -122,7 +120,7 @@ export class ExerciseComponent implements OnInit {
         } else {
           this.message = this._profService.getMessageIfWrongAnswer();
         }
-        console.log('Option clicked:', option, 'Question ID:', questionId, 'Is Correct:', isCorrect);
+
         this._cdr.detectChanges(); // Manually trigger change detection
       } else {
         console.error('Current question is undefined');

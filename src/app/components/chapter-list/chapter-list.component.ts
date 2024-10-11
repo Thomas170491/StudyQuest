@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonSpinner, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { book } from 'ionicons/icons';
+import { Router } from '@angular/router';
 const UIElements = [
  IonContent,
  IonList,
@@ -22,6 +23,7 @@ const UIElements = [
  IonToolbar,
  IonCardTitle,
  IonIcon,
+ 
  
 
 ]
@@ -40,6 +42,7 @@ export class ChapterListComponent {
   constructor(
 
     private readonly _service: ChapterService,
+    private router: Router
   ) {
     this.chapters$ = this._service.getChapters();
     addIcons({
@@ -54,6 +57,10 @@ export class ChapterListComponent {
 
     this.selectedChapter.emit(id);
    
+}
+
+goBack() {
+  this.router.navigate(['/profile']);
 }
 
   }

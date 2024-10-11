@@ -38,7 +38,6 @@ export class RewardService {
     const tokens = this.tokensSubject.value[username] || 0;
     const userObservable = this._userService.getCurrentUser().pipe(
       map(userData => {
-        console.log('User Data in add Tokens:', userData);
         if (userData) {
           const updatedTokens = tokens + value;
           this.tokensSubject.next({ ...this.tokensSubject.value, [tokens]: updatedTokens });

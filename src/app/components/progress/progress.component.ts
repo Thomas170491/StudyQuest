@@ -54,9 +54,9 @@ export class ProgressComponent implements OnInit {
     
     this.chapter$ = this._chapterService.getChapterById(this.chapterId).pipe(
       map(chapter => {
-        console.log('Chapter:', chapter)
+
         this.totalExercises = chapter?.totalExercises || 0;
-        console.log('Total exercises:', this.totalExercises);
+
         return chapter;
       })
     );

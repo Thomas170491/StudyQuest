@@ -15,24 +15,8 @@ export class ExerciseService {
   private exerciseSubject: BehaviorSubject<Exercise[]> = new BehaviorSubject<Exercise[]>([]);
   private currentLevel$ = new BehaviorSubject<number>(1);
   private currentIndex$ = new BehaviorSubject<number>(0);
-  // currentExercise$ = this.currentLevel$.pipe(
-  //   switchMap(level => this.exerciseSubject.pipe(
-  //     map(exercises => exercises.filter(exercise => exercise.level === level)),
-  //     tap(exercises => console.log('Exercises:', exercises)),
-  //     map(exercises => exercises.filter(async (e)=> {
-  //       const user = await firstValueFrom(this._userService.getCurrentUser())
-  //       if(!user){
-  //         throw new Error('User not found')
-  //       }
-  //       return user.completedExercises?.find(ce => {
-  //         ce.exerciseId !== e.id 
-  //       })
-  //     }
-  //     )),
-  //     map(filteredExercises => this.shuffleArray(filteredExercises)),
-  //     map(shuffledExercises => shuffledExercises[this.currentIndex$.value]) // Select the first exercise from the shuffled array
-  //   ))
-  // );
+
+
   currentExercise$ : Observable<Exercise|undefined>; 
 
   constructor(
@@ -50,37 +34,42 @@ export class ExerciseService {
       this._userService.getCurrentUser()
     ]).pipe(
       map(([level, exercises, user]) => {
-        console.log('Data:', { user, exercises, level });
+
     
         if (!user || !exercises || !level) {
-          console.log('Missing data:', { user, exercises, level });
+
   
           return [];
         }
     
         const currentExercises = exercises.filter(exercise => exercise.level === level);
-        console.log('Current Exercises:', currentExercises);
+     
         
         if (!user.completedExercises) {
-          console.log('User has no completed exercises.');
+
           return currentExercises;
         }
         
         const filteredExercises = currentExercises.filter(e => {
           const isCompleted = user.completedExercises.some(ce => ce.exerciseId === e.id);
-          console.log(`Exercise ${e.id} completed:`, isCompleted);
           return !isCompleted;
         });
         
         if (filteredExercises.length === 0) {
-          console.log('No exercises found for level:', level);
+    
           let level2 = level + 1;
           
           return exercises.filter(exercise => exercise.level === level2);
 
-          return [];
+          
         }
-        console.log('Filtered Exercises:', filteredExercises);
+
+        if(filteredExercises.length %4 === 0){
+          this.lifetokenserviceService.incrementLifetokens();
+          alert('Bravo! Tu as terminé tous les exercices de ce niveau!')
+        }
+
+
         return filteredExercises;
       }),
       map(shuffledExercises => {
@@ -98,8 +87,7 @@ export class ExerciseService {
       const data = await firstValueFrom(this.firestoreService.loadData('Exercises'));
       this.exerciseSubject.next(data);
       this.currentIndex$.next(0);
-      //console.log('Exercises loaded:', data);
-      console.log('Exercises loaded:', this.exerciseSubject.value);
+
     } catch (error) {
       console.error('Error loading exercises:', error);
     }
@@ -155,7 +143,6 @@ export class ExerciseService {
  }
  getCurrentExercise(subjectId: string):void{
   const filteredExercise = this.exerciseSubject.value.findIndex(exercise => exercise.subjectId === subjectId);
-  console.log('Filtered Exercises:', filteredExercise);
   if (filteredExercise <= -1) {
    return;
   }
@@ -192,7 +179,6 @@ export class ExerciseService {
 
   // Shuffle an array
   private shuffleArray(array: Exercise[]): Exercise[] {
-    console.log('Shuffling array:', array);
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
@@ -234,7 +220,6 @@ goToPreviousExercise(): void {
   }
   
   private async handleCorrectAnswer(exercise: Exercise): Promise<void>  {
-    console.log('Correct answer!');
     alert('Bravo! Ta réponse est juste!' + exercise.feedback);
 
 
@@ -247,8 +232,7 @@ goToPreviousExercise(): void {
   }
   
   saveAnswer(questionId: string, answer: string): Observable<Exercise> {
-    console.log('Saving answer for questionId:', questionId);
-    console.log('Answer:', answer);
+
     
     if (!answer) {
       throw new Error('Answer is required');
@@ -257,21 +241,12 @@ goToPreviousExercise(): void {
     return this.exerciseSubject.pipe(
       map(exercises => this.findExercise(questionId, exercises)),
       tap(async exercise => {
-        console.log('Exercise correct answer:', exercise.correctAnswer);
         if (exercise.correctAnswer === answer) {
           await this.handleCorrectAnswer(exercise);
           const currentUser = await firstValueFrom(this._userService.getCurrentUser())
           if(!currentUser){
             throw new Error('No users found')
           }
-          console.log('Exercise Id', {
-            userId : currentUser.id,
-            chapterId : await firstValueFrom(this._chapterService.currentChapterId$),
-            subjectId : exercise.subjectId,
-            exerciseId : exercise.id
-
-
-          });
           const completedExercises = currentUser.completedExercises || [];
           completedExercises.push({
             userId : currentUser.id,
